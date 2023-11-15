@@ -1,13 +1,13 @@
 <template>
   <div
-    class="main"
+    id="main"
     :style="{
       width: `${width * scale}px`,
-      height: `${(height + bottom) * scale}px`
+      height: `${height * scale}px`
     }"
   >
     <div
-      class="home"
+      id="home"
       :style="{
         transform: `scale(${scale})`,
         width: `${width}px`,
@@ -50,16 +50,15 @@ for (const i in modules) {
 }
 
 // 计算窗口尺寸
-const width = 3200
-const height = (width / 16) * 9
-const bottom = 100
+const width = 1920
+const height = 1080
 const scale = ref(1)
 
 const shouldHorizontal = ref(false)
 
 const setSize = () => {
   shouldHorizontal.value = window.innerWidth <= 550 && window.innerWidth < window.innerHeight
-  scale.value = Math.min(window.innerWidth / width, window.innerHeight / (height + bottom))
+  scale.value = Math.min(window.innerWidth / width, window.innerHeight / height)
 }
 setSize()
 
@@ -69,10 +68,24 @@ window.onresize = () => {
 </script>
 
 <style lang="stylus" scoped>
-.main
-  .home
+#main
+  #home
     position relative
     height 100%
     width 100%
     transform-origin left top
+    display flex
+    justify-content center
+    align-items center
+
+    &:after
+      content ''
+      z-index -1
+      position absolute
+      width 100%
+      height 100%
+      background url('@/assets/bg.webp')
+      background-size 100%
+      background-repeat no-repeat
+      box-shadow 0 0 20px 20px rgba(0, 0, 0, 0.7) inset
 </style>
