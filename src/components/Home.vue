@@ -13,26 +13,23 @@
       </div>
     </div>
     <div class="right">
-      <MessageItem :message="testData" />
-      <MessageItem :message="{...testData, image: ''}" />
-      <MessageItem :message="testData" />
-      <MessageItem :message="testData" />
-      <MessageItem :message="testData" />
+      <MessageItem
+        v-for="(item, index) in message.list"
+        :key="index"
+        :message="item"
+        @click="onItemClick(item.id)"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import MessageItem from '@/components/Home/MessageItem.vue'
+import { message } from '@/store/message'
+import { setting } from '@/store/setting'
 
-const testData: Message = {
-  avatar: 'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
-  name: '里生外熟',
-  like: 999,
-  image: 'https://patchwiki.biligame.com/images/sr/thumb/1/14/d2v9gsa9uwv9y9l4co9vv3cbuv1icf7.png/1200px-%E6%9D%A5%E8%87%AA%E5%A4%A7%E4%BC%9F%E5%93%A5%E7%9A%84%E9%80%9A%E8%AE%AF%EF%BC%9A%E3%80%8C%E6%98%9F%E6%B5%B7%E4%B9%8B%E6%97%85%EF%BC%8C%E6%84%9F%E8%B0%A2%E5%90%8C%E8%A1%8C%E3%80%8D.png.jpeg',
-  title: '有没有人在长乐天遇到一个说要比棋的怪人？',
-  text: '<span class="text_highlight">#见鬼实录#</span>最近在长乐天冒出了一个怪人，吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦',
-  comments: []
+const onItemClick = (id: number) => {
+  setting.index = id
 }
 </script>
 

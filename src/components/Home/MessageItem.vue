@@ -66,10 +66,10 @@ const commentNum = computed(() => {
   cursor pointer
 
   &:hover
-    border-color #748e97
+    border-color #8eb2bd
 
   &:active
-    border-color #8eb2bd
+    border-color #748e97
 
   &:first-child
     margin-top 0
