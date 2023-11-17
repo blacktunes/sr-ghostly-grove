@@ -11,14 +11,25 @@
         <div class="user">
           <div class="avatar"></div>
           <div class="name">洞天风水讲座</div>
+          <Close class="close" />
         </div>
         <div class="content">
           <div class="title">绥园这么整是要抽干罗浮仙舟的气运啊！</div>
-          <div class="text">
+          <div
+            class="text"
+            :style="{ '-webkit-line-clamp': isExpand ? 'unset' : '' }"
+          >
             <span class="text_highlight">#见鬼实录#</span
             >吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦
           </div>
-          <div class="read-all">阅读全文</div>
+          <div class="read-all">
+            <div
+              class="btn"
+              @click="isExpand = !isExpand"
+            >
+              阅读全文
+            </div>
+          </div>
           <div class="line"></div>
           <div class="comment-num">共10条评论</div>
           <div class="comment-list">
@@ -27,7 +38,7 @@
                 <div class="avatar"></div>
                 <div class="name">洞天风水讲座</div>
               </div>
-              <div class="text">
+              <div class="comment-text">
                 啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦
               </div>
               <div class="reply-list">
@@ -36,7 +47,7 @@
                     <div class="avatar"></div>
                     <div class="name">洞天风水讲座</div>
                   </div>
-                  <div class="text">
+                  <div class="comment-text">
                     啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦
                   </div>
                 </div>
@@ -51,7 +62,10 @@
 </template>
 
 <script lang="ts" setup>
-console.log(1)
+import { ref } from 'vue'
+import Close from './Common/Close.vue'
+
+const isExpand = ref(false)
 </script>
 
 <style lang="stylus" scoped>
@@ -143,9 +157,17 @@ console.log(1)
         background-size 320px
         opacity 0.05
 
+      .close
+        width 40px
+        height 40px
+        margin 0 20px 0 auto
+
       .content
         flex 1
-        overflow auto
+        overflow-y auto
+        overflow-y overlay
+        overflow-x hidden
+        scrollbar-gutter stable
         margin-top 25px
         padding-right 20px
 
@@ -158,11 +180,21 @@ console.log(1)
         .text
           margin-top 20px
           text()
+          // 兼容存在问题
+          display -webkit-box
+          -webkit-box-orient vertical
+          -webkit-line-clamp 2
+          word-break break-all
+          overflow hidden
 
         .read-all
-          color #42a8b9
-          text-align right
-          font-size 20px
+          display: flex;
+          justify-content: flex-end;
+          .btn
+            display inline
+            color #42a8b9
+            font-size 20px
+            cursor pointer
 
         .line
           width 100%
@@ -179,7 +211,8 @@ console.log(1)
             .name
               color #59666e
 
-            .text
+            .comment-text
+              text()
               margin-left 50px
               margin-top 0
 
