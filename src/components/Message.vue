@@ -16,17 +16,43 @@
           >
             <Icon :name="message.list[messageIndex].is_like ? 'heart-fill' : 'heart'" />
           </div>
-          <input
-            type="text"
-            class="like-text"
-            :value="message.list[messageIndex].like.toLocaleString('US')"
-            @change="onLikeChange"
-          />
+          <div class="like-text">
+            <Transition name="slide-top">
+              <input
+                v-if="message.list[messageIndex].is_like"
+                type="text"
+                class="like-input"
+                :value="(message.list[messageIndex].like + 1).toLocaleString('US')"
+                @change="onLikeChange"
+              />
+            </Transition>
+            <Transition name="slide-bottom">
+              <input
+                v-if="!message.list[messageIndex].is_like"
+                type="text"
+                class="like-input"
+                :value="message.list[messageIndex].like.toLocaleString('US')"
+                @change="onLikeChange"
+              />
+            </Transition>
+          </div>
         </div>
         <img
+          v-if="message.list[messageIndex].image"
+          :src="message.list[messageIndex].image"
+          alt=""
+        />
+        <img
+          v-else
           src="@/assets/empty.webp"
           alt=""
         />
+        <div
+          class="btn set-image-btn"
+          @click="setImage"
+        >
+          更换图片
+        </div>
       </div>
       <div class="right">
         <div class="user">
@@ -108,14 +134,16 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import Close from './Common/Close.vue'
+import Icon from './Common/Icon.vue'
+import { compressImage } from '@/assets/image'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
-import Icon from './Common/Icon.vue'
 
 const isExpand = ref(false)
 
 const textReplace = (text: string) => {
   return text
+    .replace(/\n/g, '<br>')
     .replace(/#(\S+)#/g, '<span class="text_highlight">#$1#</span>')
     .replace(/@(\S+)\s/g, '<span class="text_highlight">@$1</span>&#160;')
 }
@@ -129,11 +157,28 @@ const commentNum = computed(() => {
   return num
 })
 
+// 点赞数处理
 const onLikeChange = (e: Event) => {
   const el = e.target as HTMLInputElement
   const newNum = Number(el.value.replace(/\D/g, '')) || 0
   el.value = newNum.toLocaleString('US')
   message.list[messageIndex.value].like = newNum
+}
+
+// 更换图片
+const setImage = () => {
+  setTimeout(() => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = async () => {
+      if (input.files?.[0]) {
+        const image = await compressImage(input.files[0])
+        message.list[messageIndex.value].image = image
+      }
+    }
+    input.click()
+  }, 0)
 }
 </script>
 
@@ -152,9 +197,14 @@ const onLikeChange = (e: Event) => {
     margin-right 10px
 
   .name
-    font-size 18px
-    color var(--name-color)
+    name()
     margin-bottom 3px
+
+.btn
+  display inline
+  color #42a8b9
+  font-size 20px
+  cursor pointer
 
 .message
   position absolute
@@ -189,6 +239,16 @@ const onLikeChange = (e: Event) => {
       z-index 5
       width 770px
       height 770px
+      overflow hidden
+
+      &:hover
+        .set-image-btn
+          opacity 1
+
+      img
+        width 100%
+        height 100%
+        object-fit cover
 
       .like
         display flex
@@ -204,19 +264,37 @@ const onLikeChange = (e: Event) => {
           justify-content center
           border-radius 50%
           background-color #3c4149
-          color #61f0f3
+          color var(--highlight-color)
           width 60px
           height 60px
           cursor pointer
 
         .like-text
+          position relative
           margin 0 0 5px 10px
-          font-size 24px
-          color #cecfd1
-          background transparent
-          outline none
-          border none
           width 600px
+          height 35px
+
+          .like-input
+            position absolute
+            font-size 24px
+            color #cecfd1
+            background transparent
+            outline none
+            border none
+
+      .set-image-btn
+        position absolute
+        bottom 10px
+        left 50%
+        padding 5px 10px
+        border-radius 2px
+        transform translateX(-50%)
+        background-color #3c4149
+        opacity 0
+
+        &:hover
+          opacity 1
 
     .right
       overflow hidden
@@ -289,12 +367,6 @@ const onLikeChange = (e: Event) => {
           display flex
           justify-content flex-end
 
-          .btn
-            display inline
-            color #42a8b9
-            font-size 20px
-            cursor pointer
-
         .line
           width 100%
           height 2px
@@ -323,6 +395,36 @@ const onLikeChange = (e: Event) => {
               height 2px
               background #3e454d
               margin 15px 0 15px 50px
+
+.slide-top-enter-active
+  transition-delay 0.5s
+  transition all 0.5s
+
+.slide-top-leave-active
+  transition all 0.5s
+
+.slide-top-enter-from
+  opacity 0
+  transform translateY(50%)
+
+.slide-top-leave-to
+  opacity 0
+  transform translateY(50%)
+
+.slide-bottom-enter-active
+  transition-delay 0.5s
+  transition all 0.5s
+
+.slide-bottom-leave-active
+  transition all 0.5s
+
+.slide-bottom-enter-from
+  opacity 0
+  transform translateY(-50%)
+
+.slide-bottom-leave-to
+  opacity 0
+  transform translateY(-50%)
 
 @keyframes rotate
   from
