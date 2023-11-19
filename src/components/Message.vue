@@ -10,12 +10,18 @@
     >
       <div class="left">
         <div class="like">
-          <div class="icon">
+          <div
+            class="icon"
+            @click="message.list[messageIndex].is_like = !message.list[messageIndex].is_like"
+          >
             <Icon :name="message.list[messageIndex].is_like ? 'heart-fill' : 'heart'" />
           </div>
-          <div class="like-text">
-            {{ message.list[messageIndex].like }}
-          </div>
+          <input
+            type="text"
+            class="like-text"
+            :value="message.list[messageIndex].like.toLocaleString('US')"
+            @change="onLikeChange"
+          />
         </div>
         <img
           src="@/assets/empty.webp"
@@ -40,7 +46,7 @@
           <div
             class="text"
             :style="{ '-webkit-line-clamp': isExpand ? 'unset' : '' }"
-            v-html="textFilter(message.list[messageIndex].text)"
+            v-html="textReplace(message.list[messageIndex].text)"
           ></div>
           <div class="read-all">
             <div
@@ -68,7 +74,7 @@
               </div>
               <div
                 class="comment-text"
-                v-html="textFilter(comment.text)"
+                v-html="textReplace(comment.text)"
               ></div>
               <div class="reply-list">
                 <div
@@ -86,7 +92,7 @@
                   </div>
                   <div
                     class="comment-text"
-                    v-html="textFilter(reply.text)"
+                    v-html="textReplace(reply.text)"
                   ></div>
                 </div>
               </div>
@@ -108,7 +114,7 @@ import Icon from './Common/Icon.vue'
 
 const isExpand = ref(false)
 
-const textFilter = (text: string) => {
+const textReplace = (text: string) => {
   return text
     .replace(/#(\S+)#/g, '<span class="text_highlight">#$1#</span>')
     .replace(/@(\S+)\s/g, '<span class="text_highlight">@$1</span>&#160;')
@@ -122,6 +128,13 @@ const commentNum = computed(() => {
   })
   return num
 })
+
+const onLikeChange = (e: Event) => {
+  const el = e.target as HTMLInputElement
+  const newNum = Number(el.value.replace(/\D/g, '')) || 0
+  el.value = newNum.toLocaleString('US')
+  message.list[messageIndex.value].like = newNum
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -200,6 +213,10 @@ const commentNum = computed(() => {
           margin 0 0 5px 10px
           font-size 24px
           color #cecfd1
+          background transparent
+          outline none
+          border none
+          width 600px
 
     .right
       overflow hidden
