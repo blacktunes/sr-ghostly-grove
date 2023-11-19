@@ -16,9 +16,17 @@
           v-html="message.text"
         ></div>
         <div class="info">
-          <div class="icon">
-            <Icon name="like" />
-            <span>{{ message.like }}</span>
+          <div
+            class="icon"
+            :class="{ highlight: message.is_like }"
+          >
+            <Icon
+              width="25"
+              height="25"
+              :name="message.is_like ? 'heart-fill' : 'heart'"
+              @click.stop="$emit('like')"
+            />
+            <span>{{ message.like ? message.like + 1 : message.like }}</span>
           </div>
           <div class="icon">
             <Icon name="comment" />
@@ -42,6 +50,10 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   message: Message
+}>()
+
+defineEmits<{
+  (event: 'like'): void
 }>()
 
 const commentNum = computed(() => {
@@ -139,4 +151,7 @@ const commentNum = computed(() => {
       height 170px
       margin-left 30px
       object-fit cover
+
+.highlight
+  color var(--highlight-color) !important
 </style>

@@ -18,6 +18,7 @@
         :key="index"
         :message="item"
         @click="onItemClick(item.id)"
+        @like="onLikeChange(item.id)"
       />
     </div>
   </div>
@@ -26,10 +27,17 @@
 <script lang="ts" setup>
 import MessageItem from '@/components/Home/MessageItem.vue'
 import { message } from '@/store/message'
-import { setting } from '@/store/setting'
+import { getMessageIndex, setting } from '@/store/setting'
 
 const onItemClick = (id: number) => {
-  setting.index = id
+  setting.id = id
+}
+
+const onLikeChange = (id: number) => {
+  const index = getMessageIndex(id)
+  if (index !== -1) {
+    message.list[index].is_like = !message.list[index].is_like
+  }
 }
 </script>
 

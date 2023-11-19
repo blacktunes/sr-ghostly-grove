@@ -1,8 +1,8 @@
 <template>
   <div
     class="message"
-    v-if="setting.index"
-    @click="setting.index = undefined"
+    v-if="setting.id"
+    @click="setting.id = undefined"
   >
     <div
       class="message-box"
@@ -64,7 +64,7 @@
           <div class="name">{{ message.list[messageIndex].name }}</div>
           <Close
             class="close"
-            @click="setting.index = undefined"
+            @click="setting.id = undefined"
           />
         </div>
         <div class="content">
@@ -268,6 +268,9 @@ const setImage = () => {
           width 60px
           height 60px
           cursor pointer
+
+          svg
+            margin-top 5px
 
         .like-text
           position relative
