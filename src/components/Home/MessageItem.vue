@@ -26,7 +26,7 @@
               :name="message.is_like ? 'heart-fill' : 'heart'"
               @click.stop="$emit('like')"
             />
-            <span>{{ message.like ? message.like + 1 : message.like }}</span>
+            <span>{{ message.is_like ? message.like + 1 : message.like }}</span>
           </div>
           <div class="icon">
             <Icon name="comment" />

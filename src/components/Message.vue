@@ -295,6 +295,7 @@ const setImage = () => {
         transform translateX(-50%)
         background-color #3c4149
         opacity 0
+        user-select none
 
         &:hover
           opacity 1

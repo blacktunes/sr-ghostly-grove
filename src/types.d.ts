@@ -14,5 +14,6 @@ type Message = MessageBase & {
   is_like: boolean
   like: number
   image?: string
+  time: number
   comments: CommentItem[]
 }
