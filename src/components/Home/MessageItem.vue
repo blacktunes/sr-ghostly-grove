@@ -19,7 +19,7 @@
         <div class="title">{{ message.title }}</div>
         <div
           class="text"
-          v-html="message.text"
+          v-html="textReplace(message.text)"
         ></div>
         <div class="info">
           <div
@@ -53,6 +53,7 @@
 <script lang="ts" setup>
 import Icon from '@/components/Common/Icon.vue'
 import { setting } from '@/store/setting'
+import { textReplace } from '@/assets/text'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -81,6 +82,7 @@ const commentNum = computed(() => {
   padding 15px 20px
   margin-top 17px
   border 3px solid rgba(172, 172, 172, 0.5)
+  background-color rgba(0, 0, 0, 0.1)
   user-select none
   cursor pointer
 

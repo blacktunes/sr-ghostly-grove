@@ -39,6 +39,9 @@
           <div class="text">{{ item[0] }}</div>
         </div>
       </div>
+      <div class="menu">
+        <div class="btn">点击发送新动态</div>
+      </div>
     </div>
     <div class="right">
       <MessageItem
@@ -82,7 +85,7 @@ const label = ref('')
 const labelList = computed(() => {
   const list = new Map<string, Message[]>()
   for (const i in message.list) {
-    const res = message.list[i].text.match(/#\S+#/g)
+    const res = message.list[i].text.match(/#\S+?#/g)
     res?.forEach((name) => {
       if (list.has(name)) {
         list.get(name)?.push(message.list[i])
@@ -177,6 +180,15 @@ const messageList = computed(() => {
       flex 1
       display flex
       flex-direction column
+      overflow-y auto
+      overflow-y overlay
+      scrollbar-gutter stable
+      scrollbar-width none
+      margin-top 30px
+
+      &::-webkit-scrollbar
+        width 0
+        height 0
 
       .label
         display flex
@@ -193,11 +205,20 @@ const messageList = computed(() => {
         user-select none
         cursor pointer
 
+        &:first-child
+          margin-top 0
+
         &:hover
           border-color #5ce0e4
 
         &:active
           border-color #3fa3b6
+
+    .menu
+      margin 30px 0
+
+      .btn
+        color #80979b
 
   .right
     flex 1

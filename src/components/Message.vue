@@ -165,17 +165,11 @@ import { computed, ref } from 'vue'
 import Close from './Common/Close.vue'
 import Icon from './Common/Icon.vue'
 import { compressImage } from '@/assets/image'
+import { textReplace } from '@/assets/text'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
 
 const isExpand = ref(false)
-
-const textReplace = (text: string) => {
-  return text
-    .replace(/\n/g, '<br>')
-    .replace(/#(\S+)#/g, '<span class="text_highlight">#$1#</span>')
-    .replace(/@(\S+)\s/g, '<span class="text_highlight">@$1</span>&#160;')
-}
 
 const commentNum = computed(() => {
   let num = 0
