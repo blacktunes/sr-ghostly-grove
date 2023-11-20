@@ -3,10 +3,16 @@
     <div class="user">
       <img
         class="avatar"
-        :src="message.avatar"
+        :src="message.user.avatar"
         alt=""
       />
-      <div class="name">{{ message.name || '匿名' }}</div>
+      <div class="name">{{ message.user.name || '匿名' }}</div>
+      <img
+        v-if="message.user.id === setting.userID"
+        src="@/assets/badge.webp"
+        alt=""
+        class="badge"
+      />
     </div>
     <div class="content-box">
       <div class="content">
@@ -46,6 +52,7 @@
 
 <script lang="ts" setup>
 import Icon from '@/components/Common/Icon.vue'
+import { setting } from '@/store/setting'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -103,10 +110,14 @@ const commentNum = computed(() => {
       object-fit contain
 
     .name
-      flex 1
       color #b3d8e0
       font-size 20px
       margin-bottom 2px
+
+    .badge
+      margin-left 8px
+      width 26px
+      height 26px
 
   .content-box
     display flex

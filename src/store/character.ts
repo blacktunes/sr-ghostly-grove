@@ -4,7 +4,7 @@ const getAvatar = (name: string) => {
   return new URL(`../assets/avatar/${name}`, import.meta.url).href
 }
 
-export const user = reactive({
+export const character = reactive({
   game: [
     {
       id: 1,

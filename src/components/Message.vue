@@ -1,8 +1,8 @@
 <template>
   <div
     class="message"
-    v-if="setting.id"
-    @click="setting.id = undefined"
+    v-if="setting.messageID"
+    @click="setting.messageID = undefined"
   >
     <div
       class="message-box"
@@ -55,16 +55,27 @@
         </div>
       </div>
       <div class="right">
-        <div class="user">
-          <img
-            :src="message.list[messageIndex].avatar"
-            alt=""
-            class="avatar"
-          />
-          <div class="name">{{ message.list[messageIndex].name }}</div>
+        <div class="header">
+          <div
+            class="character"
+            @click="onCharacterClick()"
+          >
+            <img
+              :src="message.list[messageIndex].user.avatar"
+              alt=""
+              class="avatar"
+            />
+            <div class="name">{{ message.list[messageIndex].user.name }}</div>
+            <img
+              v-if="message.list[messageIndex].user.id === setting.userID"
+              src="@/assets/badge.webp"
+              alt=""
+              class="badge"
+            />
+          </div>
           <Close
             class="close"
-            @click="setting.id = undefined"
+            @click.stop="setting.messageID = undefined"
           />
         </div>
         <div class="content">
@@ -90,13 +101,22 @@
               :key="`comment-${index_1}`"
               class="comment"
             >
-              <div class="user">
+              <div
+                class="character"
+                @click="onCharacterClick([index_1])"
+              >
                 <img
-                  :src="comment.avatar"
+                  :src="comment.user.avatar"
                   alt=""
                   class="avatar"
                 />
-                <div class="name">{{ comment.name }}</div>
+                <div class="name">{{ comment.user.name }}</div>
+                <img
+                  v-if="comment.user.id === setting.userID"
+                  src="@/assets/badge.webp"
+                  alt=""
+                  class="badge"
+                />
               </div>
               <div
                 class="comment-text"
@@ -108,13 +128,22 @@
                   :key="`reply-${index_2}`"
                   class="reply"
                 >
-                  <div class="user">
+                  <div
+                    class="character"
+                    @click="onCharacterClick([index_1, index_2])"
+                  >
                     <img
-                      :src="reply.avatar"
+                      :src="reply.user.avatar"
                       alt=""
                       class="avatar"
                     />
-                    <div class="name">{{ reply.name }}</div>
+                    <div class="name">{{ reply.user.name }}</div>
+                    <img
+                      v-if="reply.user.id === setting.userID"
+                      src="@/assets/badge.webp"
+                      alt=""
+                      class="badge"
+                    />
                   </div>
                   <div
                     class="comment-text"
@@ -180,14 +209,25 @@ const setImage = () => {
     input.click()
   }, 0)
 }
+
+const onCharacterClick = (id?: [number] | [number, number]) => {
+  if (id) {
+    setting.select = [messageIndex.value, ...id]
+  } else {
+    setting.select = [messageIndex.value]
+  }
+}
 </script>
 
 <style lang="stylus" scoped>
 @import '../assets/style.styl'
 
-.user
+.character
+  flex 1
   display flex
   align-items center
+  user-select none
+  cursor pointer
 
   .avatar
     width 40px
@@ -198,7 +238,11 @@ const setImage = () => {
 
   .name
     name()
-    margin-bottom 3px
+
+  .badge
+    margin-left 8px
+    width 26px
+    height 26px
 
 .btn
   display inline
@@ -337,10 +381,15 @@ const setImage = () => {
         background-size 320px
         opacity 0.05
 
-      .close
-        width 40px
-        height 40px
-        margin 0 20px 0 auto
+      .header
+        display flex
+        align-items center
+        user-select none
+
+        .close
+          width 40px
+          height 40px
+          margin 0 20px 0 auto
 
       .content
         flex 1

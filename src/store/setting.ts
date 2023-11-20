@@ -1,8 +1,8 @@
-import { computed, reactive } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { message } from './message'
 
 export const messageIndex = computed(() => {
-  return getMessageIndex(setting.id)
+  return getMessageIndex(setting.messageID)
 })
 
 export const getMessageIndex = (id?: number) => {
@@ -16,7 +16,19 @@ export const getMessageIndex = (id?: number) => {
 }
 
 export const setting = reactive<{
-  id?: number
+  userID: number
+  messageID?: number
+  select?: [] | [number] | [number, number] | [number, number, number]
 }>({
-  id: undefined
+  userID: 1,
+  messageID: undefined,
+  select: undefined
 })
+
+setting.userID = Number(localStorage.getItem('sr-ghostly-grove-user-id')) || 1
+watch(
+  () => setting.userID,
+  () => {
+    localStorage.setItem('sr-ghostly-grove-user-id', String(setting.userID))
+  }
+)

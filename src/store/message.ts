@@ -6,9 +6,12 @@ export const message = reactive<{
   list: [
     {
       id: 100,
-      avatar:
-        'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
-      name: '里生外熟',
+      user: {
+        id: 1,
+        avatar:
+          'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
+        name: '里生外熟'
+      },
       is_like: false,
       like: 0,
       title: '随便一个标题',
@@ -18,9 +21,12 @@ export const message = reactive<{
     },
     {
       id: 200,
-      avatar:
-        'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
-      name: '里生外熟',
+      user: {
+        id: 1,
+        avatar:
+          'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
+        name: '里生外熟'
+      },
       is_like: true,
       like: 99999,
       image:
@@ -30,23 +36,32 @@ export const message = reactive<{
       time: 2,
       comments: [
         {
-          avatar:
-            'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
-          name: '里生外熟',
+          user: {
+            id: 1,
+            avatar:
+              'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
+            name: '里生外熟'
+          },
           text: '吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦',
           comments: [
             {
-              avatar:
-                'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
-              name: '里生外熟',
+              user: {
+                id: 1,
+                avatar:
+                  'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
+                name: '里生外熟'
+              },
               text: '吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦'
             }
           ]
         },
         {
-          avatar:
-            'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
-          name: '里生外熟',
+          user: {
+            id: 1,
+            avatar:
+              'https://patchwiki.biligame.com/images/sr/thumb/9/93/n6bsmrgi3as9gttm6av8zxb3f90r5bb.png/180px-%E4%BD%A9%E4%BD%A9%EF%BC%88%E5%A4%B4%E5%83%8F%EF%BC%89.png',
+            name: '里生外熟'
+          },
           text: '吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦吧啦',
           comments: []
         }

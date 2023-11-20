@@ -1,19 +1,28 @@
 <template>
-  <div class="user-select">
+  <div
+    class="character-select"
+    v-show="setting.select"
+    @click="setting.select = undefined"
+  >
     <div
-      class="user-select-box"
+      class="character-select-box"
       @click.stop
     >
       <div class="title-bar">
         <div class="title">选择角色</div>
-        <Close class="close" />
+        <Close
+          class="close"
+          @click="setting.select = undefined"
+        />
       </div>
       <div class="scroll-view">
         <div
-          v-for="item in user.game"
+          v-for="item in character.game"
           :key="item.id"
-          class="user"
+          class="character"
+          :class="{ highlight: item.id === highlightID }"
           :title="item.name"
+          @click="onCharacterClick(item)"
         >
           <img
             :src="item.avatar"
@@ -28,16 +37,54 @@
 </template>
 
 <script lang="ts" setup>
-import { user } from '@/store/user'
 import Close from './Common/Close.vue'
+import { character } from '@/store/character'
+import { message } from '@/store/message'
+import { setting } from '@/store/setting'
+import { computed } from 'vue'
 
-console.log(user)
+const highlightID = computed(() => {
+  if (setting.select === undefined) return 0
+  switch (setting.select.length) {
+    case 0:
+      return setting.userID
+    case 1:
+      return message.list[setting.select[0]].user.id
+    case 2:
+      return message.list[setting.select[0]].comments[setting.select[1]].user.id
+    case 3:
+      return message.list[setting.select[0]].comments[setting.select[1]].comments[setting.select[2]]
+        .user.id
+    default:
+      return 0
+  }
+})
+
+const onCharacterClick = (item: { id: number; name: string; avatar: string }) => {
+  switch (setting.select?.length) {
+    case 0:
+      setting.userID = item.id
+      break
+    case 1:
+      message.list[setting.select[0]].user = item
+      break
+    case 2:
+      message.list[setting.select[0]].comments[setting.select[1]].user = item
+      break
+    case 3:
+      message.list[setting.select[0]].comments[setting.select[1]].comments[setting.select[2]].user =
+        item
+      break
+  }
+  setting.select = undefined
+}
 </script>
 
 <style lang="stylus" scoped>
 @import '../assets/style.styl'
 
-.user-select
+.character-select
+  z-index 5
   position absolute
   top 0
   right 0
@@ -50,7 +97,7 @@ console.log(user)
   -webkit-backdrop-filter blur(10px)
   background rgba(0, 0, 0, 0.2)
 
-  .user-select-box
+  .character-select-box
     overflow hidden
     position relative
     display flex
@@ -111,7 +158,8 @@ console.log(user)
       flex-wrap wrap
       align-content flex-start
 
-      .user
+      .character
+        box-sizing border-box
         display flex
         justify-content center
         align-items center
@@ -137,6 +185,17 @@ console.log(user)
           white-space nowrap
           width 100%
 
+.highlight
+  position relative
+
+  &:after
+    content ''
+    position absolute
+    bottom -5px
+    width 100%
+    height 5px
+    background-color #42a8b9
+
 @keyframes rotate
   from
     transform translate(-50%, -50%) rotate(0deg)
@@ -144,3 +203,4 @@ console.log(user)
   to
     transform translate(-50%, -50%) rotate(360deg)
 </style>
+@/store/character

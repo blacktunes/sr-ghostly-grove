@@ -1,9 +1,23 @@
 <template>
   <div class="home">
     <div class="left">
-      <div class="user">
-        <div class="avatar"></div>
-        <div class="name">小桂子</div>
+      <div
+        class="user"
+        @click="setting.select = []"
+      >
+        <div class="avatar">
+          <img
+            :src="user.avatar"
+            alt=""
+            class="avatar-image"
+          />
+          <img
+            src="@/assets/badge.webp"
+            alt=""
+            class="badge"
+          />
+        </div>
+        <div class="name">{{ user.name }}</div>
       </div>
       <div class="label-list">
         <div
@@ -40,12 +54,21 @@
 
 <script lang="ts" setup>
 import MessageItem from '@/components/Home/MessageItem.vue'
+import { character } from '@/store/character'
 import { message } from '@/store/message'
 import { getMessageIndex, setting } from '@/store/setting'
 import { computed, ref } from 'vue'
 
+const user = computed(() => {
+  let userItem = character.game.find((item) => item.id === setting.userID)
+  if (!userItem) {
+    return character.game[0]
+  }
+  return userItem
+})
+
 const onItemClick = (id: number) => {
-  setting.id = id
+  setting.messageID = id
 }
 
 const onLikeChange = (id: number) => {
@@ -96,6 +119,7 @@ const messageList = computed(() => {
     margin-right 30px
 
     .user
+      position relative
       display flex
       flex-direction column
       justify-content center
@@ -104,13 +128,45 @@ const messageList = computed(() => {
       width 100%
       padding 20px
       border 3px solid rgba(172, 172, 172, 0.5)
+      user-select none
+      cursor pointer
+
+      &:before
+        // z-index -1
+        content ''
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+        background url('@/assets/icon.webp')
+        background-repeat no-repeat
+        background-position center
+        background-size 180px
+        opacity 0.1
+
+      &:hover
+        border-color #5ce0e4
+
+      &:active
+        border-color #3fa3b6
 
       .avatar
-        width 70px
-        height 70px
-        border-radius 50%
+        position relative
         margin-bottom 15px
-        background-color #ddd
+
+        .avatar-image
+          width 70px
+          height 70px
+          border-radius 50%
+          background-color #ddd
+
+        .badge
+          position absolute
+          right -8px
+          bottom 2px
+          width 30px
+          height 30px
 
       .name
         color #bfe1e7
@@ -139,6 +195,9 @@ const messageList = computed(() => {
 
         &:hover
           border-color #5ce0e4
+
+        &:active
+          border-color #3fa3b6
 
   .right
     flex 1

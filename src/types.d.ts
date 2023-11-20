@@ -1,6 +1,9 @@
 interface MessageBase {
-  name: string
-  avatar: string
+  user: {
+    id: number
+    name: string
+    avatar: string
+  }
   text: string
 }
 
