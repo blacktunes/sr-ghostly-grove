@@ -84,17 +84,37 @@
             class="text"
             :style="{ '-webkit-line-clamp': isExpand ? 'unset' : '' }"
             v-html="textReplace(message.list[messageIndex].text)"
+            ref="textDom"
           ></div>
-          <div class="read-all">
+          <div class="menu">
             <div
+              class="btn edit"
+              @click="showInput()"
+            >
+              编辑
+            </div>
+            <div
+              v-if="expandShow"
               class="btn"
               @click="isExpand = !isExpand"
             >
-              阅读全文
+              <span> 阅读全文 </span>
+              <Icon
+                name="down"
+                :style="{ transform: isExpand ? 'rotate(180deg)' : '' }"
+              />
             </div>
           </div>
           <div class="line"></div>
-          <div class="comment-num">共{{ commentNum }}条评论</div>
+          <div class="comment-menu">
+            <div class="comment-num">共{{ commentNum }}条评论</div>
+            <div
+              class="btn comment-btn"
+              @click="showInput(undefined, false)"
+            >
+              评论
+            </div>
+          </div>
           <div class="comment-list">
             <div
               v-for="(comment, index_1) in message.list[messageIndex].comments"
@@ -102,31 +122,40 @@
               class="comment"
             >
               <div
-                class="character"
-                @click="onCharacterClick([index_1])"
+                class="comment-item"
+                :class="{ highlight: select?.length === 1 && select?.[0] === index_1 }"
               >
-                <img
-                  :src="comment.user.avatar"
-                  alt=""
-                  class="avatar"
-                />
-                <div class="name">{{ comment.user.name }}</div>
-                <img
-                  v-if="comment.user.id === setting.userID"
-                  src="@/assets/badge.webp"
-                  alt=""
-                  class="badge"
-                />
+                <div
+                  class="character"
+                  @click="onCharacterClick([index_1])"
+                >
+                  <img
+                    :src="comment.user.avatar"
+                    alt=""
+                    class="avatar"
+                  />
+                  <div class="name">{{ comment.user.name }}</div>
+                  <img
+                    v-if="comment.user.id === setting.userID"
+                    src="@/assets/badge.webp"
+                    alt=""
+                    class="badge"
+                  />
+                </div>
+                <div
+                  class="comment-text"
+                  v-html="textReplace(comment.text)"
+                ></div>
               </div>
-              <div
-                class="comment-text"
-                v-html="textReplace(comment.text)"
-              ></div>
               <div class="reply-list">
                 <div
                   v-for="(reply, index_2) in comment.comments"
                   :key="`reply-${index_2}`"
                   class="reply"
+                  :class="{
+                    highlight:
+                      select?.length === 2 && select?.[0] === index_1 && select?.[1] === index_2
+                  }"
                 >
                   <div
                     class="character"
@@ -161,15 +190,47 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import Close from './Common/Close.vue'
 import Icon from './Common/Icon.vue'
 import { compressImage } from '@/assets/image'
 import { textReplace } from '@/assets/text'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
+import { inputData } from '@/store/input'
 
+const expandShow = ref(true)
 const isExpand = ref(false)
+const textDom = ref<HTMLElement | null>(null)
+
+const select = ref<undefined | [number] | [number, number]>([0,0])
+
+const updateExpandType = async () => {
+  await nextTick()
+  if (textDom.value) {
+    expandShow.value = textDom.value.scrollHeight > 60
+  }
+}
+
+watch(
+  () => message.list?.[messageIndex.value]?.text,
+  () => {
+    if (setting.messageID) {
+      updateExpandType()
+    }
+  }
+)
+
+watch(
+  () => setting.messageID,
+  async () => {
+    if (setting.messageID) {
+      updateExpandType()
+    } else {
+      select.value = undefined
+    }
+  }
+)
 
 const commentNum = computed(() => {
   let num = 0
@@ -211,6 +272,19 @@ const onCharacterClick = (id?: [number] | [number, number]) => {
     setting.select = [messageIndex.value]
   }
 }
+
+const showInput = (id?: [number] | [number, number], edit = true) => {
+  if (id) {
+    setting.input.index = [messageIndex.value, ...id]
+  } else {
+    if (edit) {
+      setting.input.edit = true
+      inputData.title = message.list[messageIndex.value].title
+      inputData.text = message.list[messageIndex.value].text
+    }
+    setting.input.index = [messageIndex.value]
+  }
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -239,10 +313,14 @@ const onCharacterClick = (id?: [number] | [number, number]) => {
     height 26px
 
 .btn
-  display inline
+  display flex
+  align-items center
   color #42a8b9
   font-size 20px
   cursor pointer
+
+  svg
+    margin 5px 0 0 5px
 
 .message
   position absolute
@@ -410,9 +488,21 @@ const onCharacterClick = (id?: [number] | [number, number]) => {
           word-break break-all
           overflow hidden
 
-        .read-all
+          &:hover
+            &+.menu
+              .edit
+                opacity 1
+
+        .menu
           display flex
-          justify-content flex-end
+          justify-content space-between
+
+          &:hover
+            .edit
+              opacity 1
+
+          .edit
+            opacity 0
 
         .line
           width 100%
@@ -420,28 +510,71 @@ const onCharacterClick = (id?: [number] | [number, number]) => {
           background #3e454d
           margin-top 20px
 
-        .comment-num
-          text()
-          margin 20px 0
+        .comment-menu
+          padding 0 5px
+          display flex
+          justify-content space-between
+
+          &:hover
+            .comment-btn
+              opacity 1
+
+          .comment-num
+            text()
+            margin 20px 0
+
+          .comment-btn
+            opacity 0
+
+            &:hover
+              opacity 1
 
         .comment-list
-          .comment
-            .name
-              color #59666e
+          padding 5px
 
-            .comment-text
-              text()
-              margin-left 50px
-              margin-top 0
+          .comment
+            .comment-item
+              position relative
+
+              .name
+                color #59666e
+
+              .comment-text
+                text()
+                margin-left 50px
+                margin-top 0
 
             .reply-list
               margin 15px 0 0 50px
+
+              .reply
+                position relative
+
+                .name
+                  color #59666e
+
+                .comment-text
+                  text()
+                  margin-left 50px
+                  margin-top 0
 
             .comment-line
               width calc(100% - 50px)
               height 2px
               background #3e454d
               margin 15px 0 15px 50px
+
+.highlight
+  &:before
+    z-index -1
+    content ''
+    position absolute
+    top 50%
+    left 50%
+    width 101%
+    height 101%
+    border 3px solid #42a8b9
+    transform translate(-50%, -50%)
 
 .slide-top-enter-active
   transition-delay 0.5s

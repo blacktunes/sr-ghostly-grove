@@ -8,9 +8,12 @@
       class="input-box"
       @click.stop
     >
-      <div class="title">发布帖子</div>
+      <div class="title">
+        {{ title }}
+      </div>
       <div class="content">
         <input
+          v-if="canEditTitle"
           v-model="inputData.title"
           type="text"
           class="title-input"
@@ -21,6 +24,8 @@
           class="text-input"
           @input="onInput"
           placeholder="正在编辑内容"
+          ref="textDom"
+          :spellcheck="false"
         ></textarea>
       </div>
       <div
@@ -39,14 +44,49 @@ import { setting } from '@/store/setting'
 import { message } from '@/store/message'
 import { inputData } from '@/store/input'
 import { user } from '@/store/character'
-import { computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 
-watch(() => setting.input.index, () => {
-  if (setting.input.index === undefined) {
-    inputData.title = ''
-    inputData.text = ''
-    setting.input.edit = false
+const textDom = ref<HTMLTextAreaElement | null>(null)
+
+watch(
+  () => setting.input.index,
+  async () => {
+    if (setting.input.index === undefined) {
+      inputData.title = ''
+      inputData.text = ''
+      setting.input.edit = false
+    } else {
+      await nextTick()
+      if (textDom.value) {
+        textDom.value.style.height = ''
+        textDom.value.style.height = textDom.value.scrollHeight + 10 + 'px'
+      }
+    }
   }
+)
+
+const title = computed(() => {
+  if (!setting.input.index) return
+  if (setting.input.edit) {
+    if (setting.input.index.length > 1) {
+      return '编辑评论'
+    } else {
+      return '编辑帖子'
+    }
+  } else {
+    if (setting.input.index.length === 0) {
+      return '发布帖子'
+    } else {
+      return '评论帖子'
+    }
+  }
+})
+
+const canEditTitle = computed(() => {
+  if (!setting.input.index) return true
+  if (setting.input.edit && setting.input.index?.length > 1) return false
+  if (!setting.input.edit && setting.input.index?.length > 0) return false
+  return true
 })
 
 const onInput = (e: Event) => {
@@ -57,10 +97,10 @@ const onInput = (e: Event) => {
 
 const canSubmit = computed(() => {
   if (!setting.input.index) return false
-  if (setting.input.index?.length > 1) {
-    return inputData.text.length > 0
-  } else {
+  if (canEditTitle.value) {
     return inputData.title.length > 0 && inputData.text.length > 0
+  } else {
+    return inputData.text.length > 0
   }
 })
 
@@ -81,6 +121,22 @@ const onBtnClick = () => {
       time: Date.now(),
       comments: []
     })
+  } else if (setting.input.index?.length === 1) {
+    if (setting.input.edit) {
+      message.list[setting.input.index[0]].title = inputData.title
+      message.list[setting.input.index[0]].text = inputData.text
+      message.list[setting.input.index[0]].time = Date.now()
+    } else {
+      message.list[setting.input.index[0]].comments.push({
+        user: {
+          id: user.value.id,
+          avatar: user.value.avatar,
+          name: user.value.name
+        },
+        text: inputData.text,
+        comments: []
+      })
+    }
   }
   setting.input.index = undefined
 }
