@@ -1,4 +1,5 @@
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
+import { setting } from './setting'
 
 const getAvatar = (name: string) => {
   return new URL(`../assets/avatar/${name}`, import.meta.url).href
@@ -67,4 +68,12 @@ export const character = reactive({
       avatar: getAvatar('12.webp')
     }
   ]
+})
+
+export const user = computed(() => {
+  const userItem = character.game.find((item) => item.id === setting.userID)
+  if (!userItem) {
+    return character.game[0]
+  }
+  return userItem
 })

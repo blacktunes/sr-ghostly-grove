@@ -19,10 +19,18 @@ export const setting = reactive<{
   userID: number
   messageID?: number
   select?: [] | [number] | [number, number] | [number, number, number]
+  input: {
+    edit: boolean
+    index?: [] | [number] | [number, number] | [number, number, number]
+  }
 }>({
   userID: 1,
   messageID: undefined,
-  select: undefined
+  select: undefined,
+  input: {
+    edit: false,
+    index: undefined
+  }
 })
 
 setting.userID = Number(localStorage.getItem('sr-ghostly-grove-user-id')) || 1

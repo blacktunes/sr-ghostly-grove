@@ -32,7 +32,9 @@
               :name="message.is_like ? 'heart-fill' : 'heart'"
               @click.stop="$emit('like')"
             />
-            <span>{{ message.is_like ? message.like + 1 : message.like }}</span>
+            <span>
+              {{ (message.is_like ? message.like + 1 : message.like).toLocaleString('US') }}
+            </span>
           </div>
           <div class="icon">
             <Icon name="comment" />
@@ -125,6 +127,8 @@ const commentNum = computed(() => {
     display flex
 
     .content
+      flex 1
+
       .title
         color #62f3f6
         font-size 30px

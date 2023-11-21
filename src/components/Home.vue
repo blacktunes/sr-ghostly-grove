@@ -39,8 +39,16 @@
           <div class="text">{{ item[0] }}</div>
         </div>
       </div>
-      <div class="menu">
-        <div class="btn">点击发送新动态</div>
+      <div
+        class="menu"
+        @click="onBtnClick"
+      >
+        <img
+          src="@/assets/ghost.webp"
+          alt=""
+          class="icon"
+        />
+        <div class="text">点击发布新帖</div>
       </div>
     </div>
     <div class="right">
@@ -57,18 +65,10 @@
 
 <script lang="ts" setup>
 import MessageItem from '@/components/Home/MessageItem.vue'
-import { character } from '@/store/character'
+import { user } from '@/store/character'
 import { message } from '@/store/message'
 import { getMessageIndex, setting } from '@/store/setting'
 import { computed, ref } from 'vue'
-
-const user = computed(() => {
-  let userItem = character.game.find((item) => item.id === setting.userID)
-  if (!userItem) {
-    return character.game[0]
-  }
-  return userItem
-})
 
 const onItemClick = (id: number) => {
   setting.messageID = id
@@ -103,6 +103,10 @@ const messageList = computed(() => {
   }
   return [...message.list].sort((a, b) => b.time - a.time)
 })
+
+const onBtnClick = () => {
+  setting.input.index = []
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -215,10 +219,19 @@ const messageList = computed(() => {
           border-color #3fa3b6
 
     .menu
-      margin 30px 0
+      margin 30px 0 30px 20px
+      display flex
+      align-items center
+      cursor pointer
+      user-select none
 
-      .btn
-        color #80979b
+      .icon
+        height 45px
+
+      .text
+        margin 0 0 10px 10px
+        font-size 24px
+        color #cbfaff
 
   .right
     flex 1
