@@ -20,3 +20,18 @@ export const compressImage = (file: File | Blob, width?: number) => {
     }
   })
 }
+
+export const urlToBase64 = (src: string) => {
+  return new Promise<string>((reslove) => {
+    const img = new Image()
+    img.onload = function () {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d')
+      ctx?.drawImage(img, 0, 0)
+      reslove(canvas.toDataURL('image/webp'))
+    }
+    img.src = src
+  })
+}
