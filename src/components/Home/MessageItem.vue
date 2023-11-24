@@ -1,5 +1,8 @@
 <template>
   <div class="message-box">
+    <div class="del">
+      <Icon name="delete" @click.stop="$emit('delete')" />
+    </div>
     <div class="user">
       <img
         class="avatar"
@@ -64,6 +67,7 @@ const props = defineProps<{
 
 defineEmits<{
   (event: 'like'): void
+  (event: 'delete'): void
 }>()
 
 const commentNum = computed(() => {
@@ -78,6 +82,7 @@ const commentNum = computed(() => {
 
 <style lang="stylus" scoped>
 .message-box
+  position relative
   box-sizing border-box
   width 100%
   height 270px
@@ -96,6 +101,21 @@ const commentNum = computed(() => {
 
   &:first-child
     margin-top 0
+
+  &:hover
+    .del
+      opacity 1
+
+  .del
+    position absolute
+    top 10px
+    right 10px
+    color #fff
+    opacity 0
+    cursor pointer
+
+    &:hover
+      opacity 1
 
   .user
     display flex

@@ -58,6 +58,7 @@
         :message="item"
         @click="onItemClick(item.id)"
         @like="onLikeChange(item.id)"
+        @delete="handelDelete(item.id)"
       />
     </div>
   </div>
@@ -79,6 +80,16 @@ const onLikeChange = (id: number) => {
   const index = getMessageIndex(id)
   if (index !== -1) {
     message.list[index].is_like = !message.list[index].is_like
+  }
+}
+
+const handelDelete = (id: number) => {
+  const index = getMessageIndex(id)
+  if (index !== -1) {
+    const flag = confirm('是否删除该贴？')
+    if (flag) {
+      message.list.splice(index, 1)
+    }
   }
 }
 
