@@ -26,10 +26,15 @@ export const urlToBase64 = (src: string) => {
     const img = new Image()
     img.onload = function () {
       const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        reslove('')
+        return
+      }
+
       canvas.width = img.width
       canvas.height = img.height
-      const ctx = canvas.getContext('2d')
-      ctx?.drawImage(img, 0, 0)
+      ctx.drawImage(img, 0, 0)
       reslove(canvas.toDataURL('image/webp'))
     }
     img.src = src

@@ -19,7 +19,7 @@
         <div class="title">{{ message.title }}</div>
         <div
           class="text"
-          v-html="textReplace(message.text)"
+          v-html="textReplace(message.text, true)"
         ></div>
         <div class="info">
           <div

@@ -83,7 +83,7 @@
           <div
             class="text"
             :style="{ '-webkit-line-clamp': isExpand ? 'unset' : '' }"
-            v-html="textReplace(message.list[messageIndex].text)"
+            v-html="textReplace(message.list[messageIndex].text, true)"
             ref="textDom"
           ></div>
           <div class="menu">
