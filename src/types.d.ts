@@ -20,3 +20,9 @@ type Message = MessageBase & {
   time: number
   comments: CommentItem[]
 }
+
+interface Character {
+  id: number
+  name: string
+  avatar: string
+}

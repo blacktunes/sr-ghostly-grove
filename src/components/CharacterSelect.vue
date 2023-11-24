@@ -31,17 +31,47 @@
           />
           <div class="name">{{ item.name }}</div>
         </div>
+        <div
+          v-for="(item, index) in character.custom"
+          :key="item.id"
+          class="character"
+          :class="{ highlight: item.id === highlightID }"
+          :title="item.name"
+          @click="onCharacterClick(item)"
+          @contextmenu.prevent="handelDelete(index)"
+        >
+          <img
+            :src="item.avatar"
+            alt=""
+            class="avatar"
+          />
+          <div class="name">{{ item.name }}</div>
+        </div>
+        <div class="character">
+          <div
+            class="avatar icon"
+            @click="onAddClick"
+          >
+            <Icon
+              name="add"
+              width="80"
+              height="80"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { inputData } from '@/store/input'
 import Close from './Common/Close.vue'
+import Icon from './Common/Icon.vue'
+import { inputData } from '@/store/input'
 import { character } from '@/store/character'
 import { setting } from '@/store/setting'
 import { computed } from 'vue'
+import { compressImage } from '@/assets/image'
 
 const highlightID = computed(() => {
   if (setting.select === undefined) return 0
@@ -61,6 +91,35 @@ const onCharacterClick = (item: { id: number; name: string; avatar: string }) =>
     }
   }
   setting.select = undefined
+}
+
+const onAddClick = () => {
+  const name = prompt('角色名')
+  if (name !== null && name.length > 0) {
+    setTimeout(() => {
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = 'image/*'
+      input.onchange = async () => {
+        if (input.files?.[0]) {
+          const avatar = await compressImage(input.files[0])
+          character.custom.push({
+            id: Date.now(),
+            name,
+            avatar
+          })
+        }
+      }
+      input.click()
+    }, 0)
+  }
+}
+
+const handelDelete = (index: number) => {
+  const flag = confirm('是否删除该用户？')
+  if (flag) {
+    character.custom.splice(index, 1)
+  }
 }
 </script>
 
@@ -160,6 +219,7 @@ const onCharacterClick = (item: { id: number; name: string; avatar: string }) =>
           border-radius 50%
 
         .name
+          height 30px
           margin-top 10px
           font-size 20px
           text-align center
@@ -168,6 +228,15 @@ const onCharacterClick = (item: { id: number; name: string; avatar: string }) =>
           text-overflow ellipsis
           white-space nowrap
           width 100%
+
+.icon
+  display flex
+  justify-content center
+  align-items center
+  color #888
+  border-radius 50%
+  border 2px solid #888
+  margin-bottom 40px
 
 .highlight
   position relative
