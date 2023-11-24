@@ -55,6 +55,46 @@
         </div>
       </div>
       <div class="right">
+        <div
+          v-if="select"
+          class="comment-menu"
+        >
+          <div class="menu-info">
+            <div class="menu-info-text">{{ selectName }}</div>
+            <div
+              class="menu-info-icon"
+              @click="select = undefined"
+            >
+              <Icon
+                name="down"
+                width="26"
+                height="26"
+                color="#fff"
+              />
+            </div>
+          </div>
+          <div class="menu-btn-list">
+            <div
+              class="menu-btn"
+              @click="showInput(select, false)"
+              v-if="select?.length === 1"
+            >
+              回复
+            </div>
+            <div
+              class="menu-btn"
+              @click="showInput(select)"
+            >
+              编辑
+            </div>
+            <div
+              class="menu-btn"
+              @click="onDeleteClick"
+            >
+              删除
+            </div>
+          </div>
+        </div>
         <div class="header">
           <div
             class="character"
@@ -106,7 +146,7 @@
             </div>
           </div>
           <div class="line"></div>
-          <div class="comment-menu">
+          <div class="comment-bar">
             <div class="comment-num">共{{ commentNum }}条评论</div>
             <div
               class="btn comment-btn"
@@ -124,10 +164,11 @@
               <div
                 class="comment-item"
                 :class="{ highlight: select?.length === 1 && select?.[0] === index_1 }"
+                @click="select = [index_1]"
               >
                 <div
                   class="character"
-                  @click="onCharacterClick([index_1])"
+                  @click.stop="onCharacterClick([index_1])"
                 >
                   <img
                     :src="comment.user.avatar"
@@ -156,10 +197,11 @@
                     highlight:
                       select?.length === 2 && select?.[0] === index_1 && select?.[1] === index_2
                   }"
+                  @click="select = [index_1, index_2]"
                 >
                   <div
                     class="character"
-                    @click="onCharacterClick([index_1, index_2])"
+                    @click.stop="onCharacterClick([index_1, index_2])"
                   >
                     <img
                       :src="reply.user.avatar"
@@ -184,6 +226,10 @@
             </div>
           </div>
         </div>
+        <div
+          class="placeholder"
+          v-if="select"
+        ></div>
       </div>
     </div>
   </div>
@@ -203,7 +249,20 @@ const expandShow = ref(true)
 const isExpand = ref(false)
 const textDom = ref<HTMLElement | null>(null)
 
-const select = ref<undefined | [number] | [number, number]>([0,0])
+const select = ref<undefined | [number] | [number, number]>()
+const selectName = computed(() => {
+  if (select.value) {
+    if (select.value.length === 1) {
+      return `@${message.list[messageIndex.value].comments[select.value[0]].user.name}`
+    } else if (select.value.length === 2) {
+      return `@${
+        message.list[messageIndex.value].comments[select.value[0]].comments[select.value[1]].user
+          .name
+      }`
+    }
+  }
+  return ''
+})
 
 const updateExpandType = async () => {
   await nextTick()
@@ -273,8 +332,29 @@ const onCharacterClick = (id?: [number] | [number, number]) => {
   }
 }
 
+const onDeleteClick = () => {
+  const flag = confirm('是否删除该评论？')
+  if (flag) {
+    if (select.value?.length === 1) {
+      message.list[messageIndex.value].comments.splice(select.value[0], 1)
+    } else if (select.value?.length === 2) {
+      message.list[messageIndex.value].comments[select.value[0]].comments.splice(select.value[1], 1)
+    }
+    message.list[messageIndex.value].time = Date.now()
+    select.value = undefined
+  }
+}
+
 const showInput = (id?: [number] | [number, number], edit = true) => {
   if (id) {
+    if (edit) {
+      setting.input.edit = true
+      if (id.length === 1) {
+        inputData.text = message.list[messageIndex.value].comments[id[0]].text
+      } else if (id.length === 2) {
+        inputData.text = message.list[messageIndex.value].comments[id[0]].comments[id[1]].text
+      }
+    }
     setting.input.index = [messageIndex.value, ...id]
   } else {
     if (edit) {
@@ -453,88 +533,162 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
         background-size 320px
         opacity 0.05
 
-      .header
+    .comment-menu
+      position absolute
+      bottom 0
+      left 0
+      width 100%
+      height 230px
+
+      .menu-info
+        position relative
         display flex
         align-items center
-        user-select none
+        justify-content center
+        width 100%
+        height 30px
+        background-color #42a8b9
 
-        .close
+        .menu-info-text
+          font-size 20px
+          line-height 30px
+
+        .menu-info-icon
+          position absolute
+          right 20px
+          display flex
+          align-items center
+          justify-content center
           width 40px
           height 40px
-          margin 0 20px 0 auto
+          background-color #333
+          border-radius 50%
+          border 2px solid #42a8b9
+          cursor pointer
 
-      .content
-        flex 1
-        overflow-y auto
-        overflow-y overlay
-        overflow-x hidden
-        scrollbar-gutter stable
-        margin-top 25px
-        padding-right 20px
+          svg
+            margin-top 3px
 
-        .name
-          name()
+      .menu-btn-list
+        display flex
+        flex-direction column
+        align-items center
+        justify-content center
+        width 100%
+        padding 10px 0
 
-        .title
-          title()
-
-        .text
-          margin-top 20px
-          text()
-          // 兼容存在问题
-          display -webkit-box
-          -webkit-box-orient vertical
-          -webkit-line-clamp 2
-          word-break break-all
-          overflow hidden
-
-          &:hover
-            &+.menu
-              .edit
-                opacity 1
-
-        .menu
+        .menu-btn
           display flex
-          justify-content space-between
+          align-items center
+          justify-content center
+          width 90%
+          height 45px
+          margin 5px 0
+          border-radius 25px
+          border 2px solid #666
+          font-size 24px
+          color #ddd
+          cursor pointer
 
-          &:hover
+    .header
+      display flex
+      align-items center
+      user-select none
+
+      .close
+        z-index 10
+        width 40px
+        height 40px
+        margin 0 20px 0 auto
+
+    .content
+      flex 1
+      overflow-y auto
+      overflow-y overlay
+      overflow-x hidden
+      scrollbar-gutter stable
+      margin-top 25px
+      padding-right 20px
+
+      .name
+        name()
+
+      .title
+        title()
+
+      .text
+        margin-top 20px
+        text()
+        // 兼容存在问题
+        display -webkit-box
+        -webkit-box-orient vertical
+        -webkit-line-clamp 2
+        word-break break-all
+        overflow hidden
+
+        &:hover
+          &+.menu
             .edit
               opacity 1
 
+      .menu
+        display flex
+        justify-content space-between
+
+        &:hover
           .edit
-            opacity 0
+            opacity 1
 
-        .line
-          width 100%
-          height 2px
-          background #3e454d
-          margin-top 20px
+        .edit
+          opacity 0
 
-        .comment-menu
-          padding 0 5px
-          display flex
-          justify-content space-between
+      .line
+        width 100%
+        height 2px
+        background #3e454d
+        margin-top 20px
+
+      .comment-bar
+        padding 0 5px
+        display flex
+        justify-content space-between
+
+        &:hover
+          .comment-btn
+            opacity 1
+
+        .comment-num
+          text()
+          margin 20px 0
+
+        .comment-btn
+          opacity 0
 
           &:hover
-            .comment-btn
-              opacity 1
+            opacity 1
 
-          .comment-num
-            text()
-            margin 20px 0
+      .comment-list
+        padding 5px
 
-          .comment-btn
-            opacity 0
+        .comment
+          .comment-item
+            position relative
+            cursor pointer
 
-            &:hover
-              opacity 1
+            .name
+              color #59666e
 
-        .comment-list
-          padding 5px
+            .comment-text
+              text()
+              margin-left 50px
+              margin-top 0
 
-          .comment
-            .comment-item
+          .reply-list
+            margin 15px 0 0 50px
+
+            .reply
               position relative
+              cursor pointer
 
               .name
                 color #59666e
@@ -544,25 +698,14 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
                 margin-left 50px
                 margin-top 0
 
-            .reply-list
-              margin 15px 0 0 50px
+          .comment-line
+            width calc(100% - 50px)
+            height 2px
+            background #3e454d
+            margin 15px 0 15px 50px
 
-              .reply
-                position relative
-
-                .name
-                  color #59666e
-
-                .comment-text
-                  text()
-                  margin-left 50px
-                  margin-top 0
-
-            .comment-line
-              width calc(100% - 50px)
-              height 2px
-              background #3e454d
-              margin 15px 0 15px 50px
+    .placeholder
+      height 230px
 
 .highlight
   &:before

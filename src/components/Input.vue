@@ -107,6 +107,7 @@ const canSubmit = computed(() => {
 const onBtnClick = () => {
   if (!canSubmit.value) return
   if (setting.input.index?.length === 0) {
+    // 发布新帖
     message.list.push({
       id: Date.now(),
       user: {
@@ -123,10 +124,12 @@ const onBtnClick = () => {
     })
   } else if (setting.input.index?.length === 1) {
     if (setting.input.edit) {
+      // 编辑帖子
       message.list[setting.input.index[0]].title = inputData.title
       message.list[setting.input.index[0]].text = inputData.text
       message.list[setting.input.index[0]].time = Date.now()
     } else {
+      // 评论
       message.list[setting.input.index[0]].comments.push({
         user: {
           id: user.value.id,
@@ -136,6 +139,30 @@ const onBtnClick = () => {
         text: inputData.text,
         comments: []
       })
+    }
+  } else if (setting.input.index?.length === 2) {
+    if (setting.input.edit) {
+      // 编辑评论
+      message.list[setting.input.index[0]].comments[setting.input.index[1]].text = inputData.text
+      message.list[setting.input.index[0]].time = Date.now()
+    } else {
+      // 评论回复
+      message.list[setting.input.index[0]].comments[setting.input.index[1]].comments.push({
+        user: {
+          id: user.value.id,
+          avatar: user.value.avatar,
+          name: user.value.name
+        },
+        text: inputData.text
+      })
+    }
+  } else if (setting.input.index?.length === 3) {
+    if (setting.input.edit) {
+      // 编辑评论回复
+      message.list[setting.input.index[0]].comments[setting.input.index[1]].comments[
+        setting.input.index[2]
+      ].text = inputData.text
+      message.list[setting.input.index[0]].time = Date.now()
     }
   }
   setting.input.index = undefined
