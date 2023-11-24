@@ -18,7 +18,7 @@ export const getMessageIndex = (id?: number) => {
 export const setting = reactive<{
   userID: number
   messageID?: number
-  select?: [] | [number] | [number, number] | [number, number, number]
+  select?: [boolean]
   input: {
     edit: boolean
     index?: [] | [number] | [number, number] | [number, number, number]

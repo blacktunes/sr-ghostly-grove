@@ -96,10 +96,7 @@
           </div>
         </div>
         <div class="header">
-          <div
-            class="character"
-            @click="onCharacterClick()"
-          >
+          <div class="character">
             <img
               :src="message.list[messageIndex].user.avatar"
               alt=""
@@ -166,10 +163,7 @@
                 :class="{ highlight: select?.length === 1 && select?.[0] === index_1 }"
                 @click="select = [index_1]"
               >
-                <div
-                  class="character"
-                  @click.stop="onCharacterClick([index_1])"
-                >
+                <div class="character">
                   <img
                     :src="comment.user.avatar"
                     alt=""
@@ -199,10 +193,7 @@
                   }"
                   @click="select = [index_1, index_2]"
                 >
-                  <div
-                    class="character"
-                    @click.stop="onCharacterClick([index_1, index_2])"
-                  >
+                  <div class="character">
                     <img
                       :src="reply.user.avatar"
                       alt=""
@@ -244,6 +235,7 @@ import { textReplace } from '@/assets/text'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
 import { inputData } from '@/store/input'
+import { user } from '@/store/character'
 
 const expandShow = ref(true)
 const isExpand = ref(false)
@@ -324,14 +316,6 @@ const setImage = () => {
   }, 0)
 }
 
-const onCharacterClick = (id?: [number] | [number, number]) => {
-  if (id) {
-    setting.select = [messageIndex.value, ...id]
-  } else {
-    setting.select = [messageIndex.value]
-  }
-}
-
 const onDeleteClick = () => {
   const flag = confirm('是否删除该评论？')
   if (flag) {
@@ -351,9 +335,13 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
       setting.input.edit = true
       if (id.length === 1) {
         inputData.text = message.list[messageIndex.value].comments[id[0]].text
+        inputData.user = message.list[messageIndex.value].comments[id[0]].user
       } else if (id.length === 2) {
         inputData.text = message.list[messageIndex.value].comments[id[0]].comments[id[1]].text
+        inputData.user = message.list[messageIndex.value].comments[id[0]].comments[id[1]].user
       }
+    } else {
+      inputData.user = user.value
     }
     setting.input.index = [messageIndex.value, ...id]
   } else {
@@ -361,6 +349,9 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
       setting.input.edit = true
       inputData.title = message.list[messageIndex.value].title
       inputData.text = message.list[messageIndex.value].text
+      inputData.user = message.list[messageIndex.value].user
+    } else {
+      inputData.user = user.value
     }
     setting.input.index = [messageIndex.value]
   }
@@ -375,7 +366,6 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
   display flex
   align-items center
   user-select none
-  cursor pointer
 
   .avatar
     width 40px

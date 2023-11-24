@@ -3,7 +3,7 @@
     <div class="left">
       <div
         class="user"
-        @click="setting.select = []"
+        @click="setting.select = [true]"
       >
         <div class="avatar">
           <img
@@ -66,6 +66,7 @@
 <script lang="ts" setup>
 import MessageItem from '@/components/Home/MessageItem.vue'
 import { user } from '@/store/character'
+import { inputData } from '@/store/input'
 import { message } from '@/store/message'
 import { getMessageIndex, setting } from '@/store/setting'
 import { computed, ref } from 'vue'
@@ -105,6 +106,7 @@ const messageList = computed(() => {
 })
 
 const onBtnClick = () => {
+  inputData.user = user.value
   setting.input.index = []
 }
 </script>

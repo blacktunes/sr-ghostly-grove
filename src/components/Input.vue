@@ -12,6 +12,23 @@
         {{ title }}
       </div>
       <div class="content">
+        <div
+          class="character"
+          @click.stop="setting.select = [false]"
+        >
+          <img
+            :src="inputData.user.avatar"
+            alt=""
+            class="avatar"
+          />
+          <div class="name">{{ inputData.user.name }}</div>
+          <img
+            v-if="inputData.user.id === setting.userID"
+            src="@/assets/badge.webp"
+            alt=""
+            class="badge"
+          />
+        </div>
         <input
           v-if="canEditTitle"
           v-model="inputData.title"
@@ -33,7 +50,7 @@
         :class="{ disabled: !canSubmit }"
         @click="onBtnClick"
       >
-        发布
+        {{ btnText }}
       </div>
     </div>
   </div>
@@ -43,7 +60,6 @@
 import { setting } from '@/store/setting'
 import { message } from '@/store/message'
 import { inputData } from '@/store/input'
-import { user } from '@/store/character'
 import { ref, computed, watch, nextTick } from 'vue'
 
 const textDom = ref<HTMLTextAreaElement | null>(null)
@@ -54,6 +70,11 @@ watch(
     if (setting.input.index === undefined) {
       inputData.title = ''
       inputData.text = ''
+      inputData.user = {
+        id: 1,
+        name: '',
+        avatar: ''
+      }
       setting.input.edit = false
     } else {
       await nextTick()
@@ -78,6 +99,19 @@ const title = computed(() => {
       return '发布帖子'
     } else {
       return '评论帖子'
+    }
+  }
+})
+
+const btnText = computed(() => {
+  if (!setting.input.index) return
+  if (setting.input.edit) {
+    return '修改'
+  } else {
+    if (setting.input.index.length === 0) {
+      return '发布'
+    } else {
+      return '评论'
     }
   }
 })
@@ -110,11 +144,7 @@ const onBtnClick = () => {
     // 发布新帖
     message.list.push({
       id: Date.now(),
-      user: {
-        id: user.value.id,
-        avatar: user.value.avatar,
-        name: user.value.name
-      },
+      user: inputData.user,
       is_like: false,
       like: 0,
       title: inputData.title,
@@ -127,15 +157,12 @@ const onBtnClick = () => {
       // 编辑帖子
       message.list[setting.input.index[0]].title = inputData.title
       message.list[setting.input.index[0]].text = inputData.text
+      message.list[setting.input.index[0]].user = inputData.user
       message.list[setting.input.index[0]].time = Date.now()
     } else {
       // 评论
       message.list[setting.input.index[0]].comments.push({
-        user: {
-          id: user.value.id,
-          avatar: user.value.avatar,
-          name: user.value.name
-        },
+        user: inputData.user,
         text: inputData.text,
         comments: []
       })
@@ -144,15 +171,12 @@ const onBtnClick = () => {
     if (setting.input.edit) {
       // 编辑评论
       message.list[setting.input.index[0]].comments[setting.input.index[1]].text = inputData.text
+      message.list[setting.input.index[0]].comments[setting.input.index[1]].user = inputData.user
       message.list[setting.input.index[0]].time = Date.now()
     } else {
       // 评论回复
       message.list[setting.input.index[0]].comments[setting.input.index[1]].comments.push({
-        user: {
-          id: user.value.id,
-          avatar: user.value.avatar,
-          name: user.value.name
-        },
+        user: inputData.user,
         text: inputData.text
       })
     }
@@ -162,6 +186,9 @@ const onBtnClick = () => {
       message.list[setting.input.index[0]].comments[setting.input.index[1]].comments[
         setting.input.index[2]
       ].text = inputData.text
+      message.list[setting.input.index[0]].comments[setting.input.index[1]].comments[
+        setting.input.index[2]
+      ].user = inputData.user
       message.list[setting.input.index[0]].time = Date.now()
     }
   }
@@ -191,17 +218,16 @@ const onBtnClick = () => {
     flex-direction column
     align-items center
     width 600px
-    height 1000px
+    height 1050px
+    padding-bottom 40px
     background rgba(11, 11, 11, 0.9)
-    margin-top 90px
-    padding-bottom 90px
     border-radius 30px 30px 0 0
     border 2px solid #42a8b9
     border-bottom none
 
     .title
       width 80%
-      margin 50px 0
+      margin 50px 0 20px 0
       padding-bottom 20px
       text-align center
       font-size 30px
@@ -210,11 +236,38 @@ const onBtnClick = () => {
       border-bottom 2px solid #3f5c6e
 
     .content
-      width 80%
       flex 1
       display flex
       flex-direction column
       align-items center
+      width 80%
+      margin-bottom 20px
+
+      .character
+        display flex
+        align-items center
+        width 100%
+        height 100px
+        margin-bottom 10px
+        user-select none
+        cursor pointer
+        user-select none
+
+        .avatar
+          width 80px
+          height 80px
+          border-radius 50%
+          background #666
+          margin-right 10px
+
+        .name
+          color #b3d8e0
+          font-size 30px
+
+        .badge
+          margin-left 8px
+          width 35px
+          height 35px
 
       .title-input
         box-sizing border-box
@@ -231,15 +284,16 @@ const onBtnClick = () => {
         box-sizing border-box
         width 100%
         height 60px
+        max-height 650px
         padding 5px 20px
         font-size 30px
         color #d7e8f2
         background transparent
         border 2px solid #547086
         margin-top 20px
-        max-height 650px
 
     .btn
+      flex-shrink 0
       display flex
       align-items center
       justify-content center

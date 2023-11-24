@@ -37,44 +37,28 @@
 </template>
 
 <script lang="ts" setup>
+import { inputData } from '@/store/input'
 import Close from './Common/Close.vue'
 import { character } from '@/store/character'
-import { message } from '@/store/message'
 import { setting } from '@/store/setting'
 import { computed } from 'vue'
 
 const highlightID = computed(() => {
   if (setting.select === undefined) return 0
-  switch (setting.select.length) {
-    case 0:
-      return setting.userID
-    case 1:
-      return message.list[setting.select[0]].user.id
-    case 2:
-      return message.list[setting.select[0]].comments[setting.select[1]].user.id
-    case 3:
-      return message.list[setting.select[0]].comments[setting.select[1]].comments[setting.select[2]]
-        .user.id
-    default:
-      return 0
+  if (setting.select[0]) {
+    return setting.userID
+  } else {
+    return inputData.user?.id
   }
 })
 
 const onCharacterClick = (item: { id: number; name: string; avatar: string }) => {
-  switch (setting.select?.length) {
-    case 0:
+  if (setting.select) {
+    if (setting.select[0]) {
       setting.userID = item.id
-      break
-    case 1:
-      message.list[setting.select[0]].user = item
-      break
-    case 2:
-      message.list[setting.select[0]].comments[setting.select[1]].user = item
-      break
-    case 3:
-      message.list[setting.select[0]].comments[setting.select[1]].comments[setting.select[2]].user =
-        item
-      break
+    } else {
+      inputData.user = item
+    }
   }
   setting.select = undefined
 }
@@ -84,7 +68,7 @@ const onCharacterClick = (item: { id: number; name: string; avatar: string }) =>
 @import '../assets/style.styl'
 
 .character-select
-  z-index 5
+  z-index 10
   position absolute
   top 0
   right 0
