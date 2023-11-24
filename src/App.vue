@@ -19,6 +19,21 @@
         :key="index"
         :is="item"
       />
+      <div class="link">
+        <a
+          href="https://github.com/blacktunes/sr-ghostly-grove"
+          target="_blank"
+        >
+          Github
+        </a>
+        <span>·</span>
+        <a
+          href="https://space.bilibili.com/1384118"
+          target="_blank"
+        >
+          BiliBili
+        </a>
+      </div>
     </div>
   </div>
   <Tip :show="shouldHorizontal" />
@@ -88,4 +103,26 @@ window.onresize = () => {
       background-size 100%
       background-repeat no-repeat
       box-shadow 0 0 20px 20px rgba(0, 0, 0, 0.7) inset
+
+.link
+  position absolute
+  bottom 24px
+  display flex
+  width 100%
+  justify-content center
+  opacity 0.1
+
+  &:hover
+    opacity 1
+
+  a, span
+    color #cbfaff
+    font-size 22px
+    user-select none
+
+  a
+    text-decoration none
+
+  span
+    margin 0 10px
 </style>
