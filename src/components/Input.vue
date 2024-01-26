@@ -24,7 +24,7 @@
           <div class="name">{{ inputData.user.name }}</div>
           <img
             v-if="inputData.user.id === setting.userID"
-            src="@/assets/badge.webp"
+            src="@/assets/images/badge.webp"
             alt=""
             class="badge"
           />

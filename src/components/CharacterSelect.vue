@@ -71,7 +71,7 @@ import { inputData } from '@/store/input'
 import { character } from '@/store/character'
 import { setting } from '@/store/setting'
 import { computed } from 'vue'
-import { compressImage } from '@/assets/image'
+import { imageCompress } from '@/assets/scripts/images'
 
 const highlightID = computed(() => {
   if (setting.select === undefined) return 0
@@ -102,7 +102,7 @@ const onAddClick = () => {
       input.accept = 'image/*'
       input.onchange = async () => {
         if (input.files?.[0]) {
-          const avatar = await compressImage(input.files[0])
+          const avatar = await imageCompress(input.files[0])
           character.custom.push({
             id: Date.now(),
             name,
@@ -257,3 +257,4 @@ const handelDelete = (index: number) => {
     transform translate(-50%, -50%) rotate(360deg)
 </style>
 @/store/character
+@/assets/images/image

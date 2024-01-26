@@ -15,7 +15,7 @@
       <div class="name">{{ user.name || '匿名' }}</div>
       <img
         v-if="user.id === setting.userID"
-        src="@/assets/badge.webp"
+        src="@/assets/images/badge.webp"
         alt=""
         class="badge"
       />
@@ -61,7 +61,7 @@
 <script lang="ts" setup>
 import Icon from '@/components/Common/Icon.vue'
 import { setting } from '@/store/setting'
-import { textReplace } from '@/assets/text'
+import { textReplace } from '@/assets/scripts/text'
 import { getCharacter } from '@/store/character'
 import { computed } from 'vue'
 
@@ -198,3 +198,4 @@ const commentNum = computed(() => {
 .highlight
   color var(--highlight-color) !important
 </style>
+@/assets/scripts/text

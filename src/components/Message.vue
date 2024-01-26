@@ -44,7 +44,7 @@
         />
         <img
           v-else
-          src="@/assets/empty.webp"
+          src="@/assets/images/empty.webp"
           alt=""
         />
         <div
@@ -105,7 +105,7 @@
             <div class="name">{{ getCharacter(message.list[messageIndex].user).name }}</div>
             <img
               v-if="getCharacter(message.list[messageIndex].user).id === setting.userID"
-              src="@/assets/badge.webp"
+              src="@/assets/images/badge.webp"
               alt=""
               class="badge"
             />
@@ -172,7 +172,7 @@
                   <div class="name">{{ getCharacter(comment.user).name }}</div>
                   <img
                     v-if="getCharacter(comment.user).id === setting.userID"
-                    src="@/assets/badge.webp"
+                    src="@/assets/images/badge.webp"
                     alt=""
                     class="badge"
                   />
@@ -202,7 +202,7 @@
                     <div class="name">{{ getCharacter(reply.user).name }}</div>
                     <img
                       v-if="getCharacter(reply.user).id === setting.userID"
-                      src="@/assets/badge.webp"
+                      src="@/assets/images/badge.webp"
                       alt=""
                       class="badge"
                     />
@@ -230,8 +230,8 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import Close from './Common/Close.vue'
 import Icon from './Common/Icon.vue'
-import { compressImage } from '@/assets/image'
-import { textReplace } from '@/assets/text'
+import { imageCompress } from '@/assets/scripts/images'
+import { textReplace } from '@/assets/scripts/text'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
 import { inputData } from '@/store/input'
@@ -311,7 +311,7 @@ const setImage = () => {
     input.accept = 'image/*'
     input.onchange = async () => {
       if (input.files?.[0]) {
-        const image = await compressImage(input.files[0])
+        const image = await imageCompress(input.files[0])
         message.list[messageIndex.value].image = image
       }
     }
@@ -522,7 +522,7 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
         left 0
         width 100%
         height 100%
-        background url('@/assets/icon.webp')
+        background url('@/assets/images/icon.webp')
         background-repeat no-repeat
         background-position center
         background-size 320px
@@ -751,3 +751,4 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
   to
     transform translate(-50%, -50%) rotate(360deg)
 </style>
+@/assets/images/image@/assets/scripts/text

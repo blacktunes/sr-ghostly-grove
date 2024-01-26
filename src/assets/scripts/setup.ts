@@ -1,6 +1,7 @@
-import { IndexedDB } from './indexedDB'
-import { message } from '@/store/message'
 import { character } from '@/store/character'
+import { message } from '@/store/message'
+import { urlToBase64 } from './images'
+import { IndexedDB } from './indexedDB'
 
 new IndexedDB('sr-ghostly-grove-v2', '罗浮杂俎')
   .add({
@@ -17,3 +18,10 @@ new IndexedDB('sr-ghostly-grove-v2', '罗浮杂俎')
   .catch((err) => {
     console.error(err)
   })
+
+  // Preload
+for (const i in character.game) {
+  urlToBase64(character.game[i].avatar).then((res) => {
+    character.game[i].avatar = res
+  })
+}

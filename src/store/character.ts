@@ -1,9 +1,8 @@
 import { computed, reactive } from 'vue'
 import { setting } from './setting'
-import { urlToBase64 } from '@/assets/image'
 
 const getAvatar = (name: string) => {
-  return new URL(`../assets/avatar/${name}`, import.meta.url).href
+  return new URL(`../assets/images/avatar/${name}`, import.meta.url).href
 }
 
 export const character = reactive<{
@@ -93,12 +92,3 @@ export const user = computed(() => {
   }
   return userItem
 })
-
-const preload = async () => {
-  for (const i in character.game) {
-    urlToBase64(character.game[i].avatar).then((res) => {
-      character.game[i].avatar = res
-    })
-  }
-}
-preload()
