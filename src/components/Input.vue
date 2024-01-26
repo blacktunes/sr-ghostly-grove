@@ -1,59 +1,61 @@
 <template>
-  <div
-    class="input"
-    v-if="setting.input.index"
-    @click="setting.input.index = undefined"
-  >
+  <Transition name="input">
     <div
-      class="input-box"
-      @click.stop
+      class="input"
+      v-if="setting.input.index"
+      @click="setting.input.index = undefined"
     >
-      <div class="title">
-        {{ title }}
-      </div>
-      <div class="content">
-        <div
-          class="character"
-          @click.stop="setting.select = [false]"
-        >
-          <img
-            :src="inputData.user.avatar"
-            alt=""
-            class="avatar"
-          />
-          <div class="name">{{ inputData.user.name }}</div>
-          <img
-            v-if="inputData.user.id === setting.userID"
-            src="@/assets/images/badge.webp"
-            alt=""
-            class="badge"
-          />
-        </div>
-        <input
-          v-if="canEditTitle"
-          v-model="inputData.title"
-          type="text"
-          class="title-input"
-          placeholder="标题"
-        />
-        <textarea
-          v-model="inputData.text"
-          class="text-input"
-          @input="onInput"
-          placeholder="正在编辑内容"
-          ref="textDom"
-          :spellcheck="false"
-        ></textarea>
-      </div>
       <div
-        class="btn"
-        :class="{ disabled: !canSubmit }"
-        @click="onBtnClick"
+        class="input-box"
+        @click.stop
       >
-        {{ btnText }}
+        <div class="title">
+          {{ title }}
+        </div>
+        <div class="content">
+          <div
+            class="character"
+            @click.stop="setting.select = [false]"
+          >
+            <img
+              :src="inputData.user.avatar"
+              alt=""
+              class="avatar"
+            />
+            <div class="name">{{ inputData.user.name }}</div>
+            <img
+              v-if="inputData.user.id === setting.userID"
+              src="@/assets/images/badge.webp"
+              alt=""
+              class="badge"
+            />
+          </div>
+          <input
+            v-if="canEditTitle"
+            v-model="inputData.title"
+            type="text"
+            class="title-input"
+            placeholder="标题"
+          />
+          <textarea
+            v-model="inputData.text"
+            class="text-input"
+            @input="onInput"
+            placeholder="正在编辑内容"
+            ref="textDom"
+            :spellcheck="false"
+          ></textarea>
+        </div>
+        <div
+          class="btn"
+          :class="{ disabled: !canSubmit }"
+          @click="onBtnClick"
+        >
+          {{ btnText }}
+        </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
@@ -198,6 +200,7 @@ const onBtnClick = () => {
 
 <style lang="stylus" scoped>
 .input
+  overflow hidden
   z-index 5
   position absolute
   top 0
@@ -206,19 +209,18 @@ const onBtnClick = () => {
   left 0
   display flex
   justify-content center
-  align-items center
+  align-items flex-end
   backdrop-filter blur(10px)
   -webkit-backdrop-filter blur(10px)
   background rgba(0, 0, 0, 0.2)
 
   .input-box
     overflow hidden
-    position relative
     display flex
     flex-direction column
     align-items center
     width 600px
-    height 1050px
+    height 980px
     padding-bottom 40px
     background rgba(11, 11, 11, 0.9)
     border-radius 30px 30px 0 0

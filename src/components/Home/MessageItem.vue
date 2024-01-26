@@ -1,5 +1,8 @@
 <template>
-  <div class="message-box">
+  <div
+    class="message-box"
+    @contextmenu.prevent="$emit('delete')"
+  >
     <div class="del">
       <Icon
         name="delete"

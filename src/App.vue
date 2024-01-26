@@ -104,6 +104,10 @@ window.onresize = () => {
       background-repeat no-repeat
       box-shadow 0 0 20px 20px rgba(0, 0, 0, 0.7) inset
 
+#main:hover
+  .link
+    opacity 1
+
 .link
   position absolute
   bottom 24px
@@ -111,9 +115,6 @@ window.onresize = () => {
   width 100%
   justify-content center
   opacity 0.1
-
-  &:hover
-    opacity 1
 
   a, span
     color #cbfaff
