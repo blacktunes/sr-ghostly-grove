@@ -1,5 +1,4 @@
 import { reactive } from 'vue'
-import avatar from '@/assets/avatar/1.webp'
 
 export const message = reactive<{
   list: Message[]
@@ -7,11 +6,7 @@ export const message = reactive<{
   list: [
     {
       id: 1700816535616,
-      user: {
-        id: 1,
-        name: '小桂子Guinevere',
-        avatar: avatar
-      },
+      user: 0,
       is_like: true,
       like: 9998,
       title: '这是简单的使用说明',
@@ -19,19 +14,11 @@ export const message = reactive<{
       time: 1700816865344,
       comments: [
         {
-          user: {
-            id: 1,
-            name: '小桂子Guinevere',
-            avatar: avatar
-          },
+          user: 0,
           text: '点击上面的评论按钮可以发送评论\n点击评论会弹出菜单',
           comments: [
             {
-              user: {
-                id: 1,
-                name: '小桂子Guinevere',
-                avatar: avatar
-              },
+              user: 0,
               text: '没了，其他功能随缘更新'
             }
           ]

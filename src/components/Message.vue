@@ -98,13 +98,13 @@
         <div class="header">
           <div class="character">
             <img
-              :src="message.list[messageIndex].user.avatar"
+              :src="getCharacter(message.list[messageIndex].user).avatar"
               alt=""
               class="avatar"
             />
-            <div class="name">{{ message.list[messageIndex].user.name }}</div>
+            <div class="name">{{ getCharacter(message.list[messageIndex].user).name }}</div>
             <img
-              v-if="message.list[messageIndex].user.id === setting.userID"
+              v-if="getCharacter(message.list[messageIndex].user).id === setting.userID"
               src="@/assets/badge.webp"
               alt=""
               class="badge"
@@ -165,13 +165,13 @@
               >
                 <div class="character">
                   <img
-                    :src="comment.user.avatar"
+                    :src="getCharacter(comment.user).avatar"
                     alt=""
                     class="avatar"
                   />
-                  <div class="name">{{ comment.user.name }}</div>
+                  <div class="name">{{ getCharacter(comment.user).name }}</div>
                   <img
-                    v-if="comment.user.id === setting.userID"
+                    v-if="getCharacter(comment.user).id === setting.userID"
                     src="@/assets/badge.webp"
                     alt=""
                     class="badge"
@@ -195,13 +195,13 @@
                 >
                   <div class="character">
                     <img
-                      :src="reply.user.avatar"
+                      :src="getCharacter(reply.user).avatar"
                       alt=""
                       class="avatar"
                     />
-                    <div class="name">{{ reply.user.name }}</div>
+                    <div class="name">{{ getCharacter(reply.user).name }}</div>
                     <img
-                      v-if="reply.user.id === setting.userID"
+                      v-if="getCharacter(reply.user).id === setting.userID"
                       src="@/assets/badge.webp"
                       alt=""
                       class="badge"
@@ -235,7 +235,7 @@ import { textReplace } from '@/assets/text'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
 import { inputData } from '@/store/input'
-import { user } from '@/store/character'
+import { getCharacter, user } from '@/store/character'
 
 const expandShow = ref(true)
 const isExpand = ref(false)
@@ -245,11 +245,14 @@ const select = ref<undefined | [number] | [number, number]>()
 const selectName = computed(() => {
   if (select.value) {
     if (select.value.length === 1) {
-      return `@${message.list[messageIndex.value].comments[select.value[0]].user.name}`
+      return `@${
+        getCharacter(message.list[messageIndex.value].comments[select.value[0]].user).name
+      }`
     } else if (select.value.length === 2) {
       return `@${
-        message.list[messageIndex.value].comments[select.value[0]].comments[select.value[1]].user
-          .name
+        getCharacter(
+          message.list[messageIndex.value].comments[select.value[0]].comments[select.value[1]].user
+        ).name
       }`
     }
   }
@@ -335,10 +338,12 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
       setting.input.edit = true
       if (id.length === 1) {
         inputData.text = message.list[messageIndex.value].comments[id[0]].text
-        inputData.user = message.list[messageIndex.value].comments[id[0]].user
+        inputData.user = getCharacter(message.list[messageIndex.value].comments[id[0]].user)
       } else if (id.length === 2) {
         inputData.text = message.list[messageIndex.value].comments[id[0]].comments[id[1]].text
-        inputData.user = message.list[messageIndex.value].comments[id[0]].comments[id[1]].user
+        inputData.user = getCharacter(
+          message.list[messageIndex.value].comments[id[0]].comments[id[1]].user
+        )
       }
     } else {
       inputData.user = user.value
@@ -349,7 +354,7 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
       setting.input.edit = true
       inputData.title = message.list[messageIndex.value].title
       inputData.text = message.list[messageIndex.value].text
-      inputData.user = message.list[messageIndex.value].user
+      inputData.user = getCharacter(message.list[messageIndex.value].user)
     } else {
       inputData.user = user.value
     }

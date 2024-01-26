@@ -1,17 +1,20 @@
 <template>
   <div class="message-box">
     <div class="del">
-      <Icon name="delete" @click.stop="$emit('delete')" />
+      <Icon
+        name="delete"
+        @click.stop="$emit('delete')"
+      />
     </div>
     <div class="user">
       <img
         class="avatar"
-        :src="message.user.avatar"
+        :src="user.avatar"
         alt=""
       />
-      <div class="name">{{ message.user.name || '匿名' }}</div>
+      <div class="name">{{ user.name || '匿名' }}</div>
       <img
-        v-if="message.user.id === setting.userID"
+        v-if="user.id === setting.userID"
         src="@/assets/badge.webp"
         alt=""
         class="badge"
@@ -59,6 +62,7 @@
 import Icon from '@/components/Common/Icon.vue'
 import { setting } from '@/store/setting'
 import { textReplace } from '@/assets/text'
+import { getCharacter } from '@/store/character'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -69,6 +73,8 @@ defineEmits<{
   (event: 'like'): void
   (event: 'delete'): void
 }>()
+
+const user = computed(() => getCharacter(props.message.user))
 
 const commentNum = computed(() => {
   let num = 0

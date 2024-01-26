@@ -75,6 +75,14 @@ export const character = reactive<{
   custom: []
 })
 
+export const getCharacter = (item: Character | number) => {
+  if (typeof item === 'number') {
+    return character.game[item]
+  } else {
+    return item
+  }
+}
+
 export const user = computed(() => {
   const userItem =
     character.game.find((item) => item.id === setting.userID) ||
