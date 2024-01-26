@@ -1,7 +1,9 @@
 import './main.styl'
 
+import './assets/scripts/analytics'
+import './store/indexedDB'
+
 import { createApp } from 'vue'
 import App from './App.vue'
-import './store/indexedDB'
 
 createApp(App).mount('#app')
