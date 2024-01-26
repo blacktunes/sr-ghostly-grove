@@ -1,67 +1,69 @@
 <template>
-  <div
-    class="character-select"
-    v-show="setting.select"
-    @click="setting.select = undefined"
-  >
+  <Transition name="fade">
     <div
-      class="character-select-box"
-      @click.stop
+      class="character-select"
+      v-show="setting.select"
+      @click="setting.select = undefined"
     >
-      <div class="title-bar">
-        <div class="title">选择角色</div>
-        <Close
-          class="close"
-          @click="setting.select = undefined"
-        />
-      </div>
-      <div class="scroll-view">
-        <div
-          v-for="item in character.game"
-          :key="item.id"
-          class="character"
-          :class="{ highlight: item.id === highlightID }"
-          :title="item.name"
-          @click="onCharacterClick(item)"
-        >
-          <img
-            :src="item.avatar"
-            alt=""
-            class="avatar"
+      <div
+        class="character-select-box"
+        @click.stop
+      >
+        <div class="title-bar">
+          <div class="title">选择角色</div>
+          <Close
+            class="close"
+            @click="setting.select = undefined"
           />
-          <div class="name">{{ item.name }}</div>
         </div>
-        <div
-          v-for="(item, index) in character.custom"
-          :key="item.id"
-          class="character"
-          :class="{ highlight: item.id === highlightID }"
-          :title="item.name"
-          @click="onCharacterClick(item)"
-          @contextmenu.prevent="handelDelete(index)"
-        >
-          <img
-            :src="item.avatar"
-            alt=""
-            class="avatar"
-          />
-          <div class="name">{{ item.name }}</div>
-        </div>
-        <div class="character">
+        <div class="scroll-view">
           <div
-            class="avatar icon"
-            @click="onAddClick"
+            v-for="item in character.game"
+            :key="item.id"
+            class="character"
+            :class="{ highlight: item.id === highlightID }"
+            :title="item.name"
+            @click="onCharacterClick(item)"
           >
-            <Icon
-              name="add"
-              width="80"
-              height="80"
+            <img
+              :src="item.avatar"
+              alt=""
+              class="avatar"
             />
+            <div class="name">{{ item.name }}</div>
+          </div>
+          <div
+            v-for="(item, index) in character.custom"
+            :key="item.id"
+            class="character"
+            :class="{ highlight: item.id === highlightID }"
+            :title="item.name"
+            @click="onCharacterClick(item)"
+            @contextmenu.prevent="handelDelete(index)"
+          >
+            <img
+              :src="item.avatar"
+              alt=""
+              class="avatar"
+            />
+            <div class="name">{{ item.name }}</div>
+          </div>
+          <div class="character">
+            <div
+              class="avatar icon"
+              @click="onAddClick"
+            >
+              <Icon
+                name="add"
+                width="80"
+                height="80"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
@@ -71,7 +73,7 @@ import { inputData } from '@/store/input'
 import { character } from '@/store/character'
 import { setting } from '@/store/setting'
 import { computed } from 'vue'
-import { compressImage } from '@/assets/image'
+import { imageCompress } from '@/assets/scripts/images'
 
 const highlightID = computed(() => {
   if (setting.select === undefined) return 0
@@ -102,7 +104,7 @@ const onAddClick = () => {
       input.accept = 'image/*'
       input.onchange = async () => {
         if (input.files?.[0]) {
-          const avatar = await compressImage(input.files[0])
+          const avatar = await imageCompress(input.files[0])
           character.custom.push({
             id: Date.now(),
             name,
@@ -256,4 +258,4 @@ const handelDelete = (index: number) => {
   to
     transform translate(-50%, -50%) rotate(360deg)
 </style>
-@/store/character
+@/store/character @/assets/images/image

@@ -1,18 +1,24 @@
 <template>
-  <div class="message-box">
+  <div
+    class="message-box"
+    @contextmenu.prevent="$emit('delete')"
+  >
     <div class="del">
-      <Icon name="delete" @click.stop="$emit('delete')" />
+      <Icon
+        name="delete"
+        @click.stop="$emit('delete')"
+      />
     </div>
     <div class="user">
       <img
         class="avatar"
-        :src="message.user.avatar"
+        :src="user.avatar"
         alt=""
       />
-      <div class="name">{{ message.user.name || '匿名' }}</div>
+      <div class="name">{{ user.name || '匿名' }}</div>
       <img
-        v-if="message.user.id === setting.userID"
-        src="@/assets/badge.webp"
+        v-if="user.id === setting.userID"
+        src="@/assets/images/badge.webp"
         alt=""
         class="badge"
       />
@@ -58,7 +64,8 @@
 <script lang="ts" setup>
 import Icon from '@/components/Common/Icon.vue'
 import { setting } from '@/store/setting'
-import { textReplace } from '@/assets/text'
+import { textReplace } from '@/assets/scripts/text'
+import { getCharacter } from '@/store/character'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -69,6 +76,8 @@ defineEmits<{
   (event: 'like'): void
   (event: 'delete'): void
 }>()
+
+const user = computed(() => getCharacter(props.message.user))
 
 const commentNum = computed(() => {
   let num = 0
@@ -192,3 +201,4 @@ const commentNum = computed(() => {
 .highlight
   color var(--highlight-color) !important
 </style>
+@/assets/scripts/text

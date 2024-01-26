@@ -12,7 +12,7 @@
             class="avatar-image"
           />
           <img
-            src="@/assets/badge.webp"
+            src="@/assets/images/badge.webp"
             alt=""
             class="badge"
           />
@@ -44,7 +44,7 @@
         @click="onBtnClick"
       >
         <img
-          src="@/assets/ghost.webp"
+          src="@/assets/images/ghost.webp"
           alt=""
           class="icon"
         />
@@ -159,7 +159,7 @@ const onBtnClick = () => {
         left 0
         width 100%
         height 100%
-        background url('@/assets/icon.webp')
+        background url('@/assets/images/icon.webp')
         background-repeat no-repeat
         background-position center
         background-size 180px

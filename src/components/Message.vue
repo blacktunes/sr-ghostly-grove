@@ -1,241 +1,245 @@
 <template>
-  <div
-    class="message"
-    v-if="setting.messageID"
-    @click="setting.messageID = undefined"
-  >
+  <Transition name="fade">
     <div
-      class="message-box"
-      @click.stop
+      class="message"
+      v-if="setting.messageID"
+      @click="setting.messageID = undefined"
     >
-      <div class="left">
-        <div class="like">
-          <div
-            class="icon"
-            @click="message.list[messageIndex].is_like = !message.list[messageIndex].is_like"
-          >
-            <Icon :name="message.list[messageIndex].is_like ? 'heart-fill' : 'heart'" />
-          </div>
-          <div class="like-text">
-            <Transition name="slide-top">
-              <input
-                v-if="message.list[messageIndex].is_like"
-                type="text"
-                class="like-input"
-                :value="(message.list[messageIndex].like + 1).toLocaleString('US')"
-                @change="onLikeChange"
-              />
-            </Transition>
-            <Transition name="slide-bottom">
-              <input
-                v-if="!message.list[messageIndex].is_like"
-                type="text"
-                class="like-input"
-                :value="message.list[messageIndex].like.toLocaleString('US')"
-                @change="onLikeChange"
-              />
-            </Transition>
-          </div>
-        </div>
-        <img
-          v-if="message.list[messageIndex].image"
-          :src="message.list[messageIndex].image"
-          alt=""
-        />
-        <img
-          v-else
-          src="@/assets/empty.webp"
-          alt=""
-        />
-        <div
-          class="btn set-image-btn"
-          @click="setImage"
-        >
-          更换图片
-        </div>
-      </div>
-      <div class="right">
-        <div
-          v-if="select"
-          class="comment-menu"
-        >
-          <div class="menu-info">
-            <div class="menu-info-text">{{ selectName }}</div>
+      <div
+        class="message-box"
+        @click.stop
+      >
+        <div class="left">
+          <div class="like">
             <div
-              class="menu-info-icon"
-              @click="select = undefined"
+              class="icon"
+              @click="message.list[messageIndex].is_like = !message.list[messageIndex].is_like"
             >
-              <Icon
-                name="down"
-                width="26"
-                height="26"
-                color="#fff"
-              />
+              <Icon :name="message.list[messageIndex].is_like ? 'heart-fill' : 'heart'" />
+            </div>
+            <div class="like-text">
+              <Transition name="text-slide-top">
+                <input
+                  v-if="message.list[messageIndex].is_like"
+                  type="text"
+                  class="like-input"
+                  :value="(message.list[messageIndex].like + 1).toLocaleString('US')"
+                  @change="onLikeChange"
+                />
+              </Transition>
+              <Transition name="text-slide-bottom">
+                <input
+                  v-if="!message.list[messageIndex].is_like"
+                  type="text"
+                  class="like-input"
+                  :value="message.list[messageIndex].like.toLocaleString('US')"
+                  @change="onLikeChange"
+                />
+              </Transition>
             </div>
           </div>
-          <div class="menu-btn-list">
-            <div
-              class="menu-btn"
-              @click="showInput(select, false)"
-              v-if="select?.length === 1"
-            >
-              回复
-            </div>
-            <div
-              class="menu-btn"
-              @click="showInput(select)"
-            >
-              编辑
-            </div>
-            <div
-              class="menu-btn"
-              @click="onDeleteClick"
-            >
-              删除
-            </div>
-          </div>
-        </div>
-        <div class="header">
-          <div class="character">
-            <img
-              :src="message.list[messageIndex].user.avatar"
-              alt=""
-              class="avatar"
-            />
-            <div class="name">{{ message.list[messageIndex].user.name }}</div>
-            <img
-              v-if="message.list[messageIndex].user.id === setting.userID"
-              src="@/assets/badge.webp"
-              alt=""
-              class="badge"
-            />
-          </div>
-          <Close
-            class="close"
-            @click.stop="setting.messageID = undefined"
+          <img
+            v-if="message.list[messageIndex].image"
+            :src="message.list[messageIndex].image"
+            alt=""
           />
-        </div>
-        <div class="content">
-          <div class="title">{{ message.list[messageIndex].title }}</div>
+          <img
+            v-else
+            src="@/assets/images/empty.webp"
+            alt=""
+          />
           <div
-            class="text"
-            :style="{ '-webkit-line-clamp': isExpand ? 'unset' : '' }"
-            v-html="textReplace(message.list[messageIndex].text, true)"
-            ref="textDom"
-          ></div>
-          <div class="menu">
-            <div
-              class="btn edit"
-              @click="showInput()"
-            >
-              编辑
-            </div>
-            <div
-              v-if="expandShow"
-              class="btn"
-              @click="isExpand = !isExpand"
-            >
-              <span> 阅读全文 </span>
-              <Icon
-                name="down"
-                :style="{ transform: isExpand ? 'rotate(180deg)' : '' }"
-              />
-            </div>
+            class="btn set-image-btn"
+            @click="setImage"
+          >
+            更换图片
           </div>
-          <div class="line"></div>
-          <div class="comment-bar">
-            <div class="comment-num">共{{ commentNum }}条评论</div>
+        </div>
+        <div class="right">
+          <Transition name="slide-top">
             <div
-              class="btn comment-btn"
-              @click="showInput(undefined, false)"
+              v-if="select"
+              class="comment-menu"
             >
-              评论
-            </div>
-          </div>
-          <div class="comment-list">
-            <div
-              v-for="(comment, index_1) in message.list[messageIndex].comments"
-              :key="`comment-${index_1}`"
-              class="comment"
-            >
-              <div
-                class="comment-item"
-                :class="{ highlight: select?.length === 1 && select?.[0] === index_1 }"
-                @click="select = [index_1]"
-              >
-                <div class="character">
-                  <img
-                    :src="comment.user.avatar"
-                    alt=""
-                    class="avatar"
-                  />
-                  <div class="name">{{ comment.user.name }}</div>
-                  <img
-                    v-if="comment.user.id === setting.userID"
-                    src="@/assets/badge.webp"
-                    alt=""
-                    class="badge"
+              <div class="menu-info">
+                <div class="menu-info-text">{{ selectName }}</div>
+                <div
+                  class="menu-info-icon"
+                  @click="select = undefined"
+                >
+                  <Icon
+                    name="down"
+                    width="26"
+                    height="26"
+                    color="#fff"
                   />
                 </div>
-                <div
-                  class="comment-text"
-                  v-html="textReplace(comment.text)"
-                ></div>
               </div>
-              <div class="reply-list">
+              <div class="menu-btn-list">
                 <div
-                  v-for="(reply, index_2) in comment.comments"
-                  :key="`reply-${index_2}`"
-                  class="reply"
-                  :class="{
-                    highlight:
-                      select?.length === 2 && select?.[0] === index_1 && select?.[1] === index_2
-                  }"
-                  @click="select = [index_1, index_2]"
+                  class="menu-btn"
+                  @click="showInput(select, false)"
+                  v-if="select?.length === 1"
+                >
+                  回复
+                </div>
+                <div
+                  class="menu-btn"
+                  @click="showInput(select)"
+                >
+                  编辑
+                </div>
+                <div
+                  class="menu-btn"
+                  @click="onDeleteClick"
+                >
+                  删除
+                </div>
+              </div>
+            </div>
+          </Transition>
+          <div class="header">
+            <div class="character">
+              <img
+                :src="getCharacter(message.list[messageIndex].user).avatar"
+                alt=""
+                class="avatar"
+              />
+              <div class="name">{{ getCharacter(message.list[messageIndex].user).name }}</div>
+              <img
+                v-if="getCharacter(message.list[messageIndex].user).id === setting.userID"
+                src="@/assets/images/badge.webp"
+                alt=""
+                class="badge"
+              />
+            </div>
+            <Close
+              class="close"
+              @click.stop="setting.messageID = undefined"
+            />
+          </div>
+          <div class="content">
+            <div class="title">{{ message.list[messageIndex].title }}</div>
+            <div
+              class="text"
+              :style="{ '-webkit-line-clamp': isExpand ? 'unset' : '' }"
+              v-html="textReplace(message.list[messageIndex].text, true)"
+              ref="textDom"
+            ></div>
+            <div class="menu">
+              <div
+                class="btn edit"
+                @click="showInput()"
+              >
+                编辑
+              </div>
+              <div
+                v-if="expandShow"
+                class="btn"
+                @click="isExpand = !isExpand"
+              >
+                <span> 阅读全文 </span>
+                <Icon
+                  name="down"
+                  :style="{ transform: isExpand ? 'rotate(180deg)' : '' }"
+                />
+              </div>
+            </div>
+            <div class="line"></div>
+            <div class="comment-bar">
+              <div class="comment-num">共{{ commentNum }}条评论</div>
+              <div
+                class="btn comment-btn"
+                @click="showInput(undefined, false)"
+              >
+                评论
+              </div>
+            </div>
+            <div class="comment-list">
+              <div
+                v-for="(comment, index_1) in message.list[messageIndex].comments"
+                :key="`comment-${index_1}`"
+                class="comment"
+              >
+                <div
+                  class="comment-item"
+                  :class="{ highlight: select?.length === 1 && select?.[0] === index_1 }"
+                  @click="onCommentClick($event, [index_1])"
                 >
                   <div class="character">
                     <img
-                      :src="reply.user.avatar"
+                      :src="getCharacter(comment.user).avatar"
                       alt=""
                       class="avatar"
                     />
-                    <div class="name">{{ reply.user.name }}</div>
+                    <div class="name">{{ getCharacter(comment.user).name }}</div>
                     <img
-                      v-if="reply.user.id === setting.userID"
-                      src="@/assets/badge.webp"
+                      v-if="getCharacter(comment.user).id === setting.userID"
+                      src="@/assets/images/badge.webp"
                       alt=""
                       class="badge"
                     />
                   </div>
                   <div
                     class="comment-text"
-                    v-html="textReplace(reply.text)"
+                    v-html="textReplace(comment.text)"
                   ></div>
                 </div>
+                <div class="reply-list">
+                  <div
+                    v-for="(reply, index_2) in comment.comments"
+                    :key="`reply-${index_2}`"
+                    class="reply"
+                    :class="{
+                      highlight:
+                        select?.length === 2 && select?.[0] === index_1 && select?.[1] === index_2
+                    }"
+                    @click="onCommentClick($event, [index_1, index_2])"
+                  >
+                    <div class="character">
+                      <img
+                        :src="getCharacter(reply.user).avatar"
+                        alt=""
+                        class="avatar"
+                      />
+                      <div class="name">{{ getCharacter(reply.user).name }}</div>
+                      <img
+                        v-if="getCharacter(reply.user).id === setting.userID"
+                        src="@/assets/images/badge.webp"
+                        alt=""
+                        class="badge"
+                      />
+                    </div>
+                    <div
+                      class="comment-text"
+                      v-html="textReplace(reply.text)"
+                    ></div>
+                  </div>
+                </div>
+                <div class="comment-line"></div>
               </div>
-              <div class="comment-line"></div>
             </div>
           </div>
+          <div
+            class="placeholder"
+            v-if="select"
+          ></div>
         </div>
-        <div
-          class="placeholder"
-          v-if="select"
-        ></div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
 import Close from './Common/Close.vue'
 import Icon from './Common/Icon.vue'
-import { compressImage } from '@/assets/image'
-import { textReplace } from '@/assets/text'
+import { imageCompress } from '@/assets/scripts/images'
+import { textReplace } from '@/assets/scripts/text'
 import { messageIndex, setting } from '@/store/setting'
 import { message } from '@/store/message'
 import { inputData } from '@/store/input'
-import { user } from '@/store/character'
+import { getCharacter, user } from '@/store/character'
 
 const expandShow = ref(true)
 const isExpand = ref(false)
@@ -245,11 +249,14 @@ const select = ref<undefined | [number] | [number, number]>()
 const selectName = computed(() => {
   if (select.value) {
     if (select.value.length === 1) {
-      return `@${message.list[messageIndex.value].comments[select.value[0]].user.name}`
+      return `@${
+        getCharacter(message.list[messageIndex.value].comments[select.value[0]].user).name
+      }`
     } else if (select.value.length === 2) {
       return `@${
-        message.list[messageIndex.value].comments[select.value[0]].comments[select.value[1]].user
-          .name
+        getCharacter(
+          message.list[messageIndex.value].comments[select.value[0]].comments[select.value[1]].user
+        ).name
       }`
     }
   }
@@ -308,12 +315,16 @@ const setImage = () => {
     input.accept = 'image/*'
     input.onchange = async () => {
       if (input.files?.[0]) {
-        const image = await compressImage(input.files[0])
+        const image = await imageCompress(input.files[0])
         message.list[messageIndex.value].image = image
       }
     }
     input.click()
   }, 0)
+}
+
+const onCommentClick = (_e: Event, key: [number] | [number, number]) => {
+  select.value = key
 }
 
 const onDeleteClick = () => {
@@ -335,10 +346,12 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
       setting.input.edit = true
       if (id.length === 1) {
         inputData.text = message.list[messageIndex.value].comments[id[0]].text
-        inputData.user = message.list[messageIndex.value].comments[id[0]].user
+        inputData.user = getCharacter(message.list[messageIndex.value].comments[id[0]].user)
       } else if (id.length === 2) {
         inputData.text = message.list[messageIndex.value].comments[id[0]].comments[id[1]].text
-        inputData.user = message.list[messageIndex.value].comments[id[0]].comments[id[1]].user
+        inputData.user = getCharacter(
+          message.list[messageIndex.value].comments[id[0]].comments[id[1]].user
+        )
       }
     } else {
       inputData.user = user.value
@@ -349,7 +362,7 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
       setting.input.edit = true
       inputData.title = message.list[messageIndex.value].title
       inputData.text = message.list[messageIndex.value].text
-      inputData.user = message.list[messageIndex.value].user
+      inputData.user = getCharacter(message.list[messageIndex.value].user)
     } else {
       inputData.user = user.value
     }
@@ -517,7 +530,7 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
         left 0
         width 100%
         height 100%
-        background url('@/assets/icon.webp')
+        background url('@/assets/images/icon.webp')
         background-repeat no-repeat
         background-position center
         background-size 320px
@@ -702,40 +715,39 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
     z-index -1
     content ''
     position absolute
-    top 50%
-    left 50%
-    width 101%
-    height 101%
-    border 3px solid #42a8b9
-    transform translate(-50%, -50%)
+    top -5px
+    right -5px
+    bottom -5px
+    left -5px
+    border 2px solid #42a8b9
 
-.slide-top-enter-active
+.text-slide-top-enter-active
   transition-delay 0.5s
   transition all 0.5s
 
-.slide-top-leave-active
+.text-slide-top-leave-active
   transition all 0.5s
 
-.slide-top-enter-from
+.text-slide-top-enter-from
   opacity 0
   transform translateY(50%)
 
-.slide-top-leave-to
+.text-slide-top-leave-to
   opacity 0
   transform translateY(50%)
 
-.slide-bottom-enter-active
+.text-slide-bottom-enter-active
   transition-delay 0.5s
   transition all 0.5s
 
-.slide-bottom-leave-active
+.text-slide-bottom-leave-active
   transition all 0.5s
 
-.slide-bottom-enter-from
+.text-slide-bottom-enter-from
   opacity 0
   transform translateY(-50%)
 
-.slide-bottom-leave-to
+.text-slide-bottom-leave-to
   opacity 0
   transform translateY(-50%)
 
@@ -746,3 +758,4 @@ const showInput = (id?: [number] | [number, number], edit = true) => {
   to
     transform translate(-50%, -50%) rotate(360deg)
 </style>
+@/assets/images/image@/assets/scripts/text
