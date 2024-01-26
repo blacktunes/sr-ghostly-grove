@@ -1,7 +1,7 @@
 import './main.styl'
 
 import './assets/scripts/analytics'
-import './store/indexedDB'
+import './assets/scripts/setup'
 
 import { createApp } from 'vue'
 import App from './App.vue'
